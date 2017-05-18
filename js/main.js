@@ -31,20 +31,14 @@ $(function() {
         // .atrr('width', width);
     // console.log(svg);
 
-    let selection = svg.datum([table_data]);
+    let tables = svg.selectAll('rect').data(table_data);
 
-    let table = Table();
-    selection.call(table);
-
-
-    // tables.enter().append('rect')
-    //     .attr('x', table => table.x)
-    //     .attr('y', table => table.y)
-    //     .attr('width', table => table.width)
-    //     .attr('height', table => table.height)
-    //     .attr('fill', 'blue')
-
-    // let selection = d3.select("#vis").datum(data);
+    tables.enter().append('rect')
+        .attr('x', table => table.x)
+        .attr('y', table => table.y)
+        .attr('width', table => table.width)
+        .attr('height', table => table.height)
+        .attr('fill', 'blue')
 
 
 });
