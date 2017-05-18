@@ -12,9 +12,31 @@
 
 #control-bar > select {
     display: inline;
-    width: 200px;
 }
 
 #control-bar > hr {
     margin-bottom: 0;
+}
+
+body > .container {
+    margin-top: 1em;
+}
+
+#left-pane {
+    background-color: grey;
+    height: 200px;
+
+    width: 30vw; 
+    position: absolute; 
+    /*top: 0px; */
+    left: 0px; 
+}
+
+#right-pane {
+    background-color:black;
+    height: 200px;
+    width: 70vw; 
+    position: absolute; 
+    /*top: 0px; */
+    right: 0px; 
 }
