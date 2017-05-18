@@ -4,13 +4,16 @@ var Table = function() {
     var height = 500,
         width = 500,
         color = 'black',
-        x_position: 0,
-        y_position: 0;
+        x_position = 0,
+        y_position = 0;
 
     // Function returned by BubbleChart
     var chart = function(selection) {
+        console.log('charting');
+        console.log(selection);
         // Iterate through selections, in case there are multiple
         selection.each(function(data) {
+            console.log('loop');
             console.log(data);
             x_position = data.x;
             y_position = data.y;
@@ -21,10 +24,17 @@ var Table = function() {
             var ele = d3.select(this);
             console.log(ele);
 
-            var svg = ele.selectAll('svg');
 
-            svg.append('rect')
-                .attr('x', x_position)
+            var svg = ele.selectAll('svg');
+            console.log(svg);
+
+            
+
+            svg.enter().append('rect')
+                .attr('x', (table) => {
+                    console.log('table');
+                    console.log(table);
+                })
                 .attr('y', y_position)
                 .attr('height', height)
                 .attr('width', width)
