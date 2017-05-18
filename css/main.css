@@ -1,5 +1,6 @@
 #control-bar {
     width: 100vw;
+    height: 55px;
 }
 
 #step-btn {
@@ -22,21 +23,29 @@ body > .container {
     margin-top: 1em;
 }
 
-#left-pane {
-    background-color: grey;
-    height: 200px;
+/* 
+navbar is 50 px tall
+nav has 20 px padding
+control bar is 55 px tall
+hr has 20px padding
 
-    width: 30vw; 
+sum=145
+*/
+
+#left-pane {
+    /*background-color: grey;*/
+    width: 30vw;
+    height: calc(100vh - 145px);
     position: absolute; 
-    /*top: 0px; */
     left: 0px; 
 }
 
 #right-pane {
-    background-color:black;
-    height: 200px;
+    /*background-color:black;*/
     width: 70vw; 
+    height: calc(100vh - 145px);
     position: absolute; 
-    /*top: 0px; */
-    right: 0px; 
+    right: 0px;
+    border-left-style: solid;
+    border-left-color: black;
 }
