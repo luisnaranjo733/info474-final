@@ -3,20 +3,48 @@ $(function() {
     $('#about').click(() => {
         let options = {};
         $('#myModal').modal(options)
-    })
+    });
+
+    let table_size = {
+        one: {
+            width: 100,
+            height: 100,
+        },
+        two: {
+            width: 200,
+            height: 100, 
+        },
+        three: {
+            width: 300,
+            height: 100, 
+        }
+    }
 
     let table_data = [
         {
-            x: 100,
-            y: 20,
-            width: 200,
-            height: 100
+            x: 375,
+            y: 250,
+            type: table_size.one
         },
         {
-            x: 200,
-            y: 300,
-            width: 200,
-            height: 100
+            x: 500,
+            y: 250,
+            type: table_size.one
+        },
+        {
+            x: 800,
+            y: 100,
+            type: table_size.two
+        },
+        {
+            x: 600,
+            y: 575,
+            type: table_size.two
+        },
+        {
+            x: 800,
+            y: 350,
+            type: table_size.three
         },
     ];
 
@@ -36,8 +64,8 @@ $(function() {
     tables.enter().append('rect')
         .attr('x', table => table.x)
         .attr('y', table => table.y)
-        .attr('width', table => table.width)
-        .attr('height', table => table.height)
+        .attr('width', table => table.type.width)
+        .attr('height', table => table.type.height)
         .attr('fill', 'blue')
 
 
