@@ -11,12 +11,14 @@
 
     <!-- Libraries -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
     <link href="css/main.css" rel="stylesheet" type="text/css" />
 
     <script src="https://code.jquery.com/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.7.4/d3.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
         crossorigin="anonymous"></script>
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 
 
 
@@ -28,7 +30,7 @@
 
 <header>
 
-    <nav class="navbar navbar-default">
+    <nav class="navbar navbar-inverse">
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
@@ -50,6 +52,30 @@
         </div>
         <!-- /.container-fluid -->
     </nav>
+
+    <div id="control-bar" class="container-fluid">
+
+        <div class="row">
+            <div class="col-md-3">
+                <button id="step-btn" class="btn btn-default">Step</button>
+            </div>
+            <div class="col-md-3">
+                <input type="checkbox" checked data-toggle="toggle">
+            </div>
+            <div class="col-md-3">
+                <p>Wait time: <span>15 minutes</span></p>
+            </div>
+            <div class="col-md-3">
+                <select class="form-control">
+                    <option>Random</option>
+                    <option>Skewed</option>
+                    <option>Uniform</option>
+                    <option>Rolling</option>
+                </select>
+            </div>
+        </div>
+        <hr />
+    </div>
 
 </header>
 

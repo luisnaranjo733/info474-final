@@ -1,0 +1,20 @@
+#control-bar {
+    width: 100vw;
+}
+
+#step-btn {
+    width: 100px;
+}
+
+#control-bar > p {
+    display: inline;
+}
+
+#control-bar > select {
+    display: inline;
+    width: 200px;
+}
+
+#control-bar > hr {
+    margin-bottom: 0;
+}
