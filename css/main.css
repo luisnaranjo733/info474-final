@@ -50,3 +50,8 @@ sum=145
     border-left-color: black;
 }
 
+#main-svg {
+    width: 100vw;
+    height: calc(100vh - 145px);
+    z-index: -1;
+}

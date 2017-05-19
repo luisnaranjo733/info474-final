@@ -22,43 +22,33 @@ $(function() {
 
     let table_data = [
         {
-            x: 375,
+            x: 525,
             y: 250,
             type: table_size.one
         },
         {
-            x: 500,
+            x: 650,
             y: 250,
             type: table_size.one
         },
         {
-            x: 800,
+            x: 1100,
             y: 100,
             type: table_size.two
         },
         {
-            x: 600,
+            x: 800,
             y: 575,
             type: table_size.two
         },
         {
-            x: 800,
+            x: 1100,
             y: 350,
             type: table_size.three
-        },
+        }
     ];
 
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-
-    console.log(`Width: ${width}`);
-
-    let svg = d3.select('#vis').append('svg')
-                .attr('width', width)
-                .attr('height', height);
-        // .atrr('width', width);
-    // console.log(svg);
-
+    let svg = d3.select('#main-svg');
     let tables = svg.selectAll('rect').data(table_data);
 
     tables.enter().append('rect')
