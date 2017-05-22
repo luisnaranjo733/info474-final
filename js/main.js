@@ -1,110 +1,3 @@
-// define the table types and their areas in pixels
-// each seat is defined relative to the top left corner of the table.
-let TABLE_TYPE = {
-    one: {
-        name: '1x1',
-        width: 100,
-        height: 100,
-        seats: [
-            {
-                x: 50,
-                y: 0
-            },
-            {
-                x: 50,
-                y: 100
-            }
-        ]
-    },
-    two: {
-        name: '2x2',
-        width: 200,
-        height: 100,
-        seats: [
-            {
-                x: 50,
-                y: 0
-            },
-            {
-                x: 150,
-                y: 0
-            },
-            {
-                x: 50,
-                y: 100
-            },
-            {
-                x: 150,
-                y: 100
-            }
-        ]
-    },
-    three: {
-        name: '3x3',
-        width: 300,
-        height: 100,
-        seats: [
-            {
-                x: 50,
-                y: 0
-            },
-            {
-                x: 150,
-                y: 0
-            },
-            {
-                x: 250,
-                y: 0
-            },
-
-            {
-                x: 50,
-                y: 100
-            },
-            {
-                x: 150,
-                y: 100
-            },
-            {
-                x: 250,
-                y: 100
-            },
-        ]
-    }
-}
-
-// define the table layout in terms of (x,y) pixel anchor points and table types
-// (0, 0) is the top left corner of the svg NOT the window.
-// This means that a table placed at (0, 0) would actually end up at (0, 125) since the
-// navbar and toolbar are 125 pixels tall
-let TABLE_LAYOUT = [
-    {
-        x: 525,
-        y: 250,
-        type: TABLE_TYPE.one
-    },
-    {
-        x: 650,
-        y: 250,
-        type: TABLE_TYPE.one
-    },
-    {
-        x: 1100,
-        y: 100,
-        type: TABLE_TYPE.two
-    },
-    {
-        x: 800,
-        y: 575,
-        type: TABLE_TYPE.two
-    },
-    {
-        x: 1100,
-        y: 350,
-        type: TABLE_TYPE.three
-    }
-];
-
 let DEFAULT_TABLE_FILL = 'grey';
 let DEFAULT_CIRCLE_FILL = 'black';
 let DEFAULT_CIRCLE_RADIUS = 25;
@@ -132,12 +25,12 @@ $(function () {
 
     let svg = d3.select('#main-svg');
 
-    let layout = new Layout(TABLE_LAYOUT);
-    console.log(layout.getTables());
-    console.log(layout.getSeats());
+    // global variables defiend in the layout.js file
+    console.log(TABLES);
+    console.log(SEATS);
 
     // draw the tables
-    let tables = svg.selectAll('rect').data(layout.getTables());
+    let tables = svg.selectAll('rect').data(TABLES);
     tables.enter().append('rect')
         .attr('x', table => table.table_x)
         .attr('y', table => table.table_y)
@@ -147,7 +40,7 @@ $(function () {
     
 
     // draw the seats
-    let seats = svg.selectAll('circle').data(layout.getSeats());
+    let seats = svg.selectAll('circle').data(SEATS);
     seats.enter().append('circle')
         .attr('r', DEFAULT_CIRCLE_RADIUS)
         .attr('fill', DEFAULT_CIRCLE_FILL)
