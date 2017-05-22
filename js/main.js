@@ -1,5 +1,6 @@
 // define the table types and their areas in pixels
-let TABLE_SIZE = {
+// each seat is defined relative to the top left corner of the table.
+let TABLE_TYPE = {
     one: {
         width: 100,
         height: 100,
@@ -69,35 +70,38 @@ let TABLE_SIZE = {
     }
 }
 
-// define the restaurant layout in terms of (x,y) pixel anchor points and table types
+// define the table layout in terms of (x,y) pixel anchor points and table types
 // (0, 0) is the top left corner of the svg NOT the window.
-// This means that a box placed at (0, 0) would actually end up at (0, 125) since the
+// This means that a table placed at (0, 0) would actually end up at (0, 125) since the
 // navbar and toolbar are 125 pixels tall
+// NOTE: The seats in the table layout type are defined relative to the table's (x,y).
+//      The absolute coordinates for each seat need to be calculated based on the table's (x, y)
+//      and each seat's relative (x, y) from that point.
 let TABLE_LAYOUT = [
     {
         x: 525,
         y: 250,
-        type: TABLE_SIZE.one
+        type: TABLE_TYPE.one
     },
     {
         x: 650,
         y: 250,
-        type: TABLE_SIZE.one
+        type: TABLE_TYPE.one
     },
     {
         x: 1100,
         y: 100,
-        type: TABLE_SIZE.two
+        type: TABLE_TYPE.two
     },
     {
         x: 800,
         y: 575,
-        type: TABLE_SIZE.two
+        type: TABLE_TYPE.two
     },
     {
         x: 1100,
         y: 350,
-        type: TABLE_SIZE.three
+        type: TABLE_TYPE.three
     }
 ];
 
@@ -127,8 +131,9 @@ $(function () {
     });
 
     let svg = d3.select('#main-svg');
-    let tables = svg.selectAll('rect').data(TABLE_LAYOUT);
 
+    // draw the tables
+    let tables = svg.selectAll('rect').data(TABLE_LAYOUT);
     tables.enter().append('rect')
         .attr('x', table => table.x)
         .attr('y', table => table.y)
@@ -136,25 +141,33 @@ $(function () {
         .attr('height', table => table.type.height)
         .attr('fill', DEFAULT_TABLE_FILL);
     
+    // compute the absolute coordinates for all of the seats
+    // loop over each
     let seat_layout = [];
+    let seat_count = 0;
     TABLE_LAYOUT.forEach(table => {
         table.type.seats.forEach(relative_seat => {
             let absolute_seat = {
                 x: table.x + relative_seat.x,
-                y: table.y + relative_seat.y
+                y: table.y + relative_seat.y,
+                id: seat_count // assign an arbitrary id to each seat for the delay
             };
             seat_layout.push(absolute_seat);
+            seat_count += 1;
         });
     });
-    console.log(seat_layout);
 
-
+    // draw the seats
     let seats = svg.selectAll('circle').data(seat_layout);
     seats.enter().append('circle')
-        .attr('cx', seat => seat.x)
-        .attr('cy', seat => seat.y)
         .attr('r', DEFAULT_CIRCLE_RADIUS)
-        .attr('fill', DEFAULT_CIRCLE_FILL);
+        .attr('fill', DEFAULT_CIRCLE_FILL)
+        .attr('cx', 200)
+        .attr('cy', 200)
+        .transition() // example of how the queue transition might look (even though these are the table seats rn lol)
+        .delay(seat => seat.id * 250)
+        .attr('cx', seat => seat.x)
+        .attr('cy', seat => seat.y);
 
 
 });
