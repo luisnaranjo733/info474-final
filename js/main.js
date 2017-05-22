@@ -3,18 +3,76 @@ let TABLE_SIZE = {
     one: {
         width: 100,
         height: 100,
+        seats: [
+            {
+                x: 50,
+                y: 0
+            },
+            {
+                x: 50,
+                y: 100
+            }
+        ]
     },
     two: {
         width: 200,
         height: 100,
+        seats: [
+            {
+                x: 50,
+                y: 0
+            },
+            {
+                x: 150,
+                y: 0
+            },
+            {
+                x: 50,
+                y: 100
+            },
+            {
+                x: 150,
+                y: 100
+            }
+        ]
     },
     three: {
         width: 300,
         height: 100,
+        seats: [
+            {
+                x: 50,
+                y: 0
+            },
+            {
+                x: 150,
+                y: 0
+            },
+            {
+                x: 250,
+                y: 0
+            },
+
+            {
+                x: 50,
+                y: 100
+            },
+            {
+                x: 150,
+                y: 100
+            },
+            {
+                x: 250,
+                y: 100
+            },
+        ]
     }
 }
 
 // define the restaurant layout in terms of (x,y) pixel anchor points and table types
+// (0, 0) is the top left corner of the svg NOT the window.
+// This means that a box placed at (0, 0) would actually end up at (0, 125) since the
+// navbar and toolbar are 125 pixels tall
 let TABLE_LAYOUT = [
     {
         x: 525,
@@ -44,6 +102,8 @@ let TABLE_LAYOUT = [
 ];
 
 let DEFAULT_TABLE_FILL = 'grey';
+let DEFAULT_CIRCLE_FILL = 'black';
+let DEFAULT_CIRCLE_RADIUS = 25;
 
 $(function () {
 
@@ -74,7 +134,27 @@ $(function () {
         .attr('y', table => table.y)
         .attr('width', table => table.type.width)
         .attr('height', table => table.type.height)
-        .attr('fill', DEFAULT_TABLE_FILL)
+        .attr('fill', DEFAULT_TABLE_FILL);
+    
+    let seat_layout = [];
+    TABLE_LAYOUT.forEach(table => {
+        table.type.seats.forEach(relative_seat => {
+            let absolute_seat = {
+                x: table.x + relative_seat.x,
+                y: table.y + relative_seat.y
+            };
+            seat_layout.push(absolute_seat);
+        });
+    });
+    console.log(seat_layout);
+
+
+    let seats = svg.selectAll('circle').data(seat_layout);
+    seats.enter().append('circle')
+        .attr('cx', seat => seat.x)
+        .attr('cy', seat => seat.y)
+        .attr('r', DEFAULT_CIRCLE_RADIUS)
+        .attr('fill', DEFAULT_CIRCLE_FILL);
 
 
 });
