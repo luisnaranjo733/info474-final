@@ -10,14 +10,11 @@ var randParties = function(type){
         for (i=0; i < max; i++) {
             parties.push(rnorm(4,1.5,true));
         }
-        console.log(parties);
+        return parties;
     } else if (type == 'Random') {
         for (i=0; i < max; i++) {
             parties.push(runif(1,6,true));
         }
-        console.log(parties);
+        return parties;
     }
 };
-
-d3.select("#left-pane")
-    .append("svg");
