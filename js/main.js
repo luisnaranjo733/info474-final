@@ -1,6 +1,6 @@
 let DEFAULT_TABLE_FILL = 'grey';
 let DEFAULT_CIRCLE_FILL = 'black';
-let DEFAULT_CIRCLE_RADIUS = 25;
+let DEFAULT_CIRCLE_RADIUS = 17;
 
 $(function () {
 

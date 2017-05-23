@@ -50,75 +50,75 @@ We can also include parent table data on each seat if that helps.
 let TABLE_TYPE = {
     one: {
         name: '1+1',
-        width: 100,
-        height: 100,
+        width: 75,
+        height: 75,
         seats: [
             {
-                x: 50,
+                x: 37.5,
                 y: 0
             },
             {
-                x: 50,
-                y: 100
+                x: 37.5,
+                y: 75
             }
         ]
     },
     two: {
         name: '2+2',
-        width: 200,
-        height: 100,
+        width: 150,
+        height: 75,
         seats: [
             {
-                x: 50,
+                x: 37.5,
                 y: 0
             },
             {
-                x: 150,
+                x: 112.5,
                 y: 0
             },
             {
-                x: 50,
-                y: 100
+                x: 37.5,
+                y: 75
             },
             {
-                x: 150,
-                y: 100
+                x: 112.5,
+                y: 75
             }
         ]
     },
     three: {
         name: '3+3',
-        width: 300,
-        height: 100,
+        width: 225,
+        height: 75,
         seats: [
             {
-                x: 50,
+                x: 37.5,
                 y: 0
             },
             {
-                x: 150,
+                x: 112.5,
                 y: 0
             },
             {
-                x: 250,
+                x: 187.5,
                 y: 0
             },
 
             {
-                x: 50,
-                y: 100
+                x: 37.5,
+                y: 75
             },
             {
-                x: 150,
-                y: 100
+                x: 112.5,
+                y: 75
             },
             {
-                x: 250,
-                y: 100
+                x: 187.5,
+                y: 75
             },
         ]
     }
-}
+};
 
 // define the table layout in terms of (x,y) pixel anchor points and table types
 // (0, 0) is the top left corner of the svg NOT the window.
@@ -126,28 +126,28 @@ let TABLE_TYPE = {
 // navbar and toolbar are 125 pixels tall
 let TABLE_LAYOUT = [
     {
-        x: 525,
-        y: 250,
+        x: 443.75,
+        y: 187.5,
         type: TABLE_TYPE.one
+    },
+    {
+        x: 537.5,
+        y: 187.5,
+        type: TABLE_TYPE.one
+    },
+    {
+        x: 875,
+        y: 75,
+        type: TABLE_TYPE.two
     },
     {
         x: 650,
-        y: 250,
-        type: TABLE_TYPE.one
-    },
-    {
-        x: 1100,
-        y: 100,
+        y: 431.25,
         type: TABLE_TYPE.two
     },
     {
-        x: 800,
-        y: 575,
-        type: TABLE_TYPE.two
-    },
-    {
-        x: 1100,
-        y: 350,
+        x: 875,
+        y: 262.5,
         type: TABLE_TYPE.three
     }
 ];
