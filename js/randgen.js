@@ -176,5 +176,3 @@ function rlist(list) {
 // exports.rvcauchy = vectorize(rcauchy);
 // exports.rvbernoulli = vectorize(rbernoulli);
 // exports.rvlist = vectorize(rlist);
-
-// exports.histogram = histogram;

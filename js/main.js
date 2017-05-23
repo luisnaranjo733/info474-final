@@ -6,6 +6,7 @@ let DEFAULT_CIRCLE_RADIUS = 20;
 $(function () {
 
     let party_pattern = 'Random';
+    randParties(party_pattern);
 
     let randParty = () => 3;
 
@@ -24,6 +25,7 @@ $(function () {
     // update party_pattern global var on select change
     $('select').change(() => {
         party_pattern = $('select').val();
+        randParties(party_pattern);
         console.log(`Change the party pattern to ${party_pattern} and reset the queue`);
     });
 
