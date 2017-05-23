@@ -107,8 +107,8 @@ $(function () {
                 .attr("y", (party, i) => QUEUE_SLOTS[i].y + 5)
                 .style("text-anchor", "middle")
                 .style("fill", "white")
-                .text(function(q){return +q.size});   
-        
+                .text(function(q){console.log(q.size); return +q.size});   
+s
         parties.exit().remove();
     }
 
