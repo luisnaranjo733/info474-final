@@ -1,12 +1,18 @@
 let DEFAULT_TABLE_FILL = 'grey';
 let DEFAULT_SEAT_FILL = 'black';
 let DEFAULT_CIRCLE_RADIUS = 20;
+let seater = SeatOMatic();
 
 
 let party_id_count = 0;
 $(function () {
 
     let party_pattern = 'Random';
+
+    let tables_seats = TABLES.map(function (table)
+    {
+        return table.seats.length;
+    });
 
     let queue = randParties(party_pattern).map((generated_size, i) => {
         party_id_count += 1;
@@ -33,9 +39,9 @@ $(function () {
         let algorithm_is_enabled = $('#algorithm-enabled').is(':checked');
         // console.log(`Place the next party in the queue`);
         // console.log(`algorithm_is_enabled=${algorithm_is_enabled} and party_pattern=${party_pattern}`);
-        queue.shift();
+        let group = queue.shift();
         console.log(queue);
-        drawQueue();
+        drawQueue(group);
     });
 
     let svg = d3.select('#main-svg');
@@ -98,10 +104,12 @@ $(function () {
         }
     };
 
-    function drawQueue() {
+    function drawQueue(group) {
         let parties = svg.selectAll('.party').data(queue, party => party.id);
-
-        parties.exit().remove();
+        if (group)
+        {
+            seatGroup(group, parties.exit())
+        }
 
         parties
             .transition()
@@ -120,6 +128,36 @@ $(function () {
             .attr('cx', (party, i) => QUEUE_SLOTS[i].x)
             .attr('cy', (party, i) => QUEUE_SLOTS[i].y);
     
+    }
+
+    function seatGroup(group, groupCircle)
+    {
+        let table_index = seater.seq(tables_seats, group.size);
+        if (table_index[0] != table_index[1])
+        {
+            let seated_flag = false;
+            for (var i = table_index[0]; i < table_index[1]; i++)
+            {
+                let selected_table = TABLES[i];
+                if (!seated_flag)
+                {
+                    console.log(groupCircle);
+                    groupCircle
+                        .transition()
+                        .attr('cx', selected_table.table_x)
+                        .attr('cy', selected_table.table_y);
+                }
+            }
+        }
+        else
+        {
+            let selected_table = TABLES[table_index[0]];
+            groupCircle
+                .transition()
+                .attr('cx', selected_table.table_x)
+                .attr('cy', selected_table.table_y);
+        }
+
     }
 
     drawQueue();
