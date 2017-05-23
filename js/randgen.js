@@ -177,4 +177,8 @@ function rlist(list) {
 // exports.rvbernoulli = vectorize(rbernoulli);
 // exports.rvlist = vectorize(rlist);
 
+<<<<<<< HEAD
 // exports.histogram = histogram;
+=======
+// exports.histogram = histogram;
+>>>>>>> ash
