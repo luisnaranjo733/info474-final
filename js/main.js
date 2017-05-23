@@ -40,7 +40,6 @@ $(function () {
         // console.log(`Place the next party in the queue`);
         // console.log(`algorithm_is_enabled=${algorithm_is_enabled} and party_pattern=${party_pattern}`);
         let group = queue.shift();
-        console.log(queue);
         drawQueue(group);
     });
 
@@ -106,6 +105,8 @@ $(function () {
 
     function drawQueue(group) {
         let parties = svg.selectAll('.party').data(queue, party => party.id);
+        let text = svg.selectAll('.text').data(queue, party => party.id);
+
         if (group)
         {
             seatGroup(group, parties.exit())
@@ -115,7 +116,7 @@ $(function () {
             .transition()
             .duration(500)
             .attr('cx', (party, i) => QUEUE_SLOTS[i].x)
-            .attr('cy', (party, i) => QUEUE_SLOTS[i].y);
+            .attr('cy', (party, i) => QUEUE_SLOTS[i].y)
 
         parties.enter().append('circle')
             .attr('class', 'party')
@@ -127,7 +128,31 @@ $(function () {
             .delay(circle => circle.id * 150)
             .attr('cx', (party, i) => QUEUE_SLOTS[i].x)
             .attr('cy', (party, i) => QUEUE_SLOTS[i].y);
-    
+
+        text.exit().remove();
+
+        text
+            .transition()
+            .duration(500)
+            .attr("x", (party, i) => {
+                console.log(party);
+                return QUEUE_SLOTS[i].x;
+            })
+            .attr("y", (party, i) => QUEUE_SLOTS[i].y + 5);
+
+        text.enter()
+            .append('text')
+            .attr('class', 'text')
+            .attr("x", (party, i) => QUEUE_SLOTS[i].x)
+            .attr("y", (party, i) => QUEUE_SLOTS[i].y + 5)
+            .style("text-anchor", "middle")
+            .style("fill", "white")
+            .text(function(q){return +q.size});
+
+        text.exit().remove();
+
+        parties.exit().remove();
+
     }
 
     function seatGroup(group, groupCircle)
