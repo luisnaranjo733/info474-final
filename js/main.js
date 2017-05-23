@@ -113,6 +113,10 @@ $(function () {
             .attr('class', 'party')
             .attr('r', DEFAULT_CIRCLE_RADIUS)
             .attr('fill', 'blue')
+            .attr('cx', queue_x)
+            .attr('cy', $('#left-pane').height() + 100)
+            .transition()
+            .delay(circle => circle.id * 150)
             .attr('cx', (party, i) => QUEUE_SLOTS[i].x)
             .attr('cy', (party, i) => QUEUE_SLOTS[i].y);
     
