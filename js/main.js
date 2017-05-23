@@ -5,6 +5,7 @@ let DEFAULT_CIRCLE_RADIUS = 17;
 $(function () {
 
     let party_pattern = 'Random';
+    randParties(party_pattern);
 
     // open bootstrap modal to display about section on click
     $('#about').click(() => $('#myModal').modal());
@@ -12,6 +13,7 @@ $(function () {
     // update party_pattern global var on select change
     $('select').change(() => {
         party_pattern = $('select').val();
+        randParties(party_pattern);
         console.log(`Change the party pattern to ${party_pattern} and reset the queue`);
     });
 
