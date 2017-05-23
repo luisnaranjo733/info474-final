@@ -69,26 +69,30 @@ $(function () {
 
     // Finish drawing the static elements ------------------------------------------------------
 
+    let queue_x = $('#left-pane').width() / 2;
+    let left_pane_height = $('#left-pane').height() / 6;
+    let queue_y_start = 100;
+
     let QUEUE_SLOTS = {
         0: {
-            x: 200,
-            y: 200
+            x: queue_x,
+            y: queue_y_start
         },
         1: {
-            x: 200,
-            y: 300
+            x: queue_x,
+            y: queue_y_start + left_pane_height
         },
         2: {
-            x: 200,
-            y: 400,
+            x: queue_x,
+            y: queue_y_start + (left_pane_height * 2)
         },
         3: {
-            x: 200,
-            y: 500
+            x: queue_x,
+            y: queue_y_start + (left_pane_height * 3)
         },
         4: {
-            x: 200,
-            y: 600
+            x: queue_x,
+            y: queue_y_start + (left_pane_height * 4)
         }
     };
 
