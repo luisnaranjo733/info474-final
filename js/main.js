@@ -101,6 +101,14 @@ $(function () {
             .attr('cx', (party, i) => QUEUE_SLOTS[i].x)
             .attr('cy', (party, i) => QUEUE_SLOTS[i].y);
 
+        parties.enter().append('text')
+                .attr('class', 'text')
+                .attr("x", (party, i) => QUEUE_SLOTS[i].x)
+                .attr("y", (party, i) => QUEUE_SLOTS[i].y + 5)
+                .style("text-anchor", "middle")
+                .style("fill", "white")
+                .text(function(q){return +q.size});   
+        
         parties.exit().remove();
     }
 
