@@ -3,13 +3,16 @@ let DEFAULT_SEAT_FILL = 'black';
 let DEFAULT_CIRCLE_RADIUS = 20;
 
 
+let party_id_count = 0;
 $(function () {
 
     let party_pattern = 'Random';
 
-    let queue = randParties(party_pattern).map(generated_size => {
+    let queue = randParties(party_pattern).map((generated_size, i) => {
+        party_id_count += 1;
         return {
-            size: generated_size
+            size: generated_size,
+            id: party_id_count
         }
     });
     console.log(queue);
@@ -30,8 +33,7 @@ $(function () {
         let algorithm_is_enabled = $('#algorithm-enabled').is(':checked');
         // console.log(`Place the next party in the queue`);
         // console.log(`algorithm_is_enabled=${algorithm_is_enabled} and party_pattern=${party_pattern}`);
-        console.log(queue);
-        queue.pop();
+        queue.shift();
         console.log(queue);
         drawQueue();
     });
@@ -97,15 +99,23 @@ $(function () {
     };
 
     function drawQueue() {
-        let parties = svg.selectAll('.party').data(queue);
+        let parties = svg.selectAll('.party').data(queue, party => party.id);
+
+        parties.exit().remove();
+
+        parties
+            .transition()
+            .duration(500)
+            .attr('cx', (party, i) => QUEUE_SLOTS[i].x)
+            .attr('cy', (party, i) => QUEUE_SLOTS[i].y);
+
         parties.enter().append('circle')
             .attr('class', 'party')
             .attr('r', DEFAULT_CIRCLE_RADIUS)
             .attr('fill', 'blue')
             .attr('cx', (party, i) => QUEUE_SLOTS[i].x)
             .attr('cy', (party, i) => QUEUE_SLOTS[i].y);
-
-        parties.exit().remove();
+    
     }
 
     drawQueue();
