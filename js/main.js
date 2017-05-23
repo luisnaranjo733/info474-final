@@ -3,13 +3,16 @@ let DEFAULT_SEAT_FILL = 'black';
 let DEFAULT_CIRCLE_RADIUS = 20;
 
 
+let party_id_count = 0;
 $(function () {
 
     let party_pattern = 'Random';
 
-    let queue = randParties(party_pattern).map(generated_size => {
+    let queue = randParties(party_pattern).map((generated_size, i) => {
+        party_id_count += 1;
         return {
-            size: generated_size
+            size: generated_size,
+            id: party_id_count
         }
     });
     console.log(queue);
@@ -30,8 +33,7 @@ $(function () {
         let algorithm_is_enabled = $('#algorithm-enabled').is(':checked');
         // console.log(`Place the next party in the queue`);
         // console.log(`algorithm_is_enabled=${algorithm_is_enabled} and party_pattern=${party_pattern}`);
-        console.log(queue);
-        queue.pop();
+        queue.shift();
         console.log(queue);
         drawQueue();
     });
@@ -69,47 +71,81 @@ $(function () {
 
     // Finish drawing the static elements ------------------------------------------------------
 
+    let queue_x = $('#left-pane').width() / 2;
+    let left_pane_height = $('#left-pane').height() / 6;
+    let queue_y_start = 100;
+
     let QUEUE_SLOTS = {
         0: {
-            x: 200,
-            y: 200
+            x: queue_x,
+            y: queue_y_start
         },
         1: {
-            x: 200,
-            y: 300
+            x: queue_x,
+            y: queue_y_start + left_pane_height
         },
         2: {
-            x: 200,
-            y: 400,
+            x: queue_x,
+            y: queue_y_start + (left_pane_height * 2)
         },
         3: {
-            x: 200,
-            y: 500
+            x: queue_x,
+            y: queue_y_start + (left_pane_height * 3)
         },
         4: {
-            x: 200,
-            y: 600
+            x: queue_x,
+            y: queue_y_start + (left_pane_height * 4)
         }
     };
 
     function drawQueue() {
-        let parties = svg.selectAll('.party').data(queue);
+        let parties = svg.selectAll('.party').data(queue, party => party.id);
+        let text = svg.selectAll('.label').data(queue, party => party.id);
+
+        parties.exit().remove();
+
+        parties
+            .transition()
+            .duration(500)
+            .attr('cx', (party, i) => QUEUE_SLOTS[i].x)
+            .attr('cy', (party, i) => QUEUE_SLOTS[i].y)
+
         parties.enter().append('circle')
             .attr('class', 'party')
             .attr('r', DEFAULT_CIRCLE_RADIUS)
             .attr('fill', 'blue')
+            .attr('cx', queue_x)
+            .attr('cy', $('#left-pane').height() + 100)
+            .transition()
+            .delay(circle => circle.id * 150)
             .attr('cx', (party, i) => QUEUE_SLOTS[i].x)
             .attr('cy', (party, i) => QUEUE_SLOTS[i].y);
 
-        parties.enter().append('text')
-                .attr('class', 'text')
-                .attr("x", (party, i) => QUEUE_SLOTS[i].x)
-                .attr("y", (party, i) => QUEUE_SLOTS[i].y + 5)
-                .style("text-anchor", "middle")
-                .style("fill", "white")
-                .text(function(q){return +q.size});   
+
+        text.exit().remove();
+
+        text
+            .transition()
+            .duration(500)
+            .attr("x", (party, i) => {
+                console.log(party);
+                return QUEUE_SLOTS[i].x;
+            })
+            .attr("y", (party, i) => QUEUE_SLOTS[i].y + 5);
+
+        text.enter()
+            .append('text')
+            .attr('class', 'text')
+            .attr("x", (party, i) => QUEUE_SLOTS[i].x)
+            .attr("y", (party, i) => QUEUE_SLOTS[i].y + 5)
+            .style("text-anchor", "middle")
+            .style("fill", "white")
+            .text(function(q){console.log(q);return +q.size});
+
+        text.exit().remove();
         
         parties.exit().remove();
+
     }
 
     drawQueue();
