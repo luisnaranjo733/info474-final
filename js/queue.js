@@ -1,4 +1,4 @@
-var max = 6;
+var max = 5;
 var parties = [];
 
 var randParties = function(type){

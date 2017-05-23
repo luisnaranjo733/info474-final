@@ -6,17 +6,12 @@ let DEFAULT_CIRCLE_RADIUS = 20;
 $(function () {
 
     let party_pattern = 'Random';
-    randParties(party_pattern);
 
-    let randParty = () => 3;
-
-    let queue = [];
-    for(i = 0; i < 5; i++) {
-        queue.push({
-            size: randParty(party_pattern)
-        })
-    }
-
+    let queue = randParties(party_pattern).map(generated_size => {
+        return {
+            size: generated_size
+        }
+    });
     console.log(queue);
 
     // open bootstrap modal to display about section on click
