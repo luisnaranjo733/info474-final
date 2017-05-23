@@ -5,6 +5,7 @@ let DEFAULT_CIRCLE_RADIUS = 17;
 $(function () {
 
     let party_pattern = 'Random';
+    randParties(party_pattern);
 
     // open bootstrap modal to display about section on click
     $('#about').click(() => $('#myModal').modal());
