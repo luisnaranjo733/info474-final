@@ -1,8 +1,6 @@
-let DEFAULT_TABLE_FILL = 'grey';
 let DEFAULT_SEAT_FILL = 'black';
 let DEFAULT_CIRCLE_RADIUS = 20;
 let seater = SeatOMatic();
-
 
 let party_id_count = 0;
 $(function () {
@@ -59,14 +57,18 @@ $(function () {
     //  Draw the static elements --------------------------------------
 
     // draw the tables
-    let tables = svg.selectAll('rect').data(TABLES);
-    tables.enter().append('rect')
-        .attr('x', table => table.table_x)
-        .attr('y', table => table.table_y)
-        .attr('width', table => table.table_width)
-        .attr('height', table => table.table_height)
-        .attr('fill', DEFAULT_TABLE_FILL);
-    
+    function drawTables()
+    {
+        let tables = svg.selectAll('rect').data(TABLES);
+        tables.enter().append('rect')
+            .attr('x', table => table.table_x)
+            .attr('y', table => table.table_y)
+            .attr('width', table => table.table_width)
+            .attr('height', table => table.table_height)
+            .attr('fill', DEFAULT_TABLE_FILL);
+    }
+
+    drawTables();
 
     // draw the seats
     let seats = svg.selectAll('.seat').data(SEATS);
@@ -163,8 +165,6 @@ $(function () {
 
         text.exit().remove();
 
-        parties.exit().remove();
-
     }
 
     function seatGroup(group, groupCircle)
@@ -181,7 +181,9 @@ $(function () {
                     groupCircle
                         .transition()
                         .attr('cx', selected_table.table_x)
-                        .attr('cy', selected_table.table_y);
+                        .attr('cy', selected_table.table_y)
+                        .transition()
+                        .remove();
                 }
             }
         }
@@ -191,7 +193,9 @@ $(function () {
             groupCircle
                 .transition()
                 .attr('cx', selected_table.table_x)
-                .attr('cy', selected_table.table_y);
+                .attr('cy', selected_table.table_y)
+                .transition()
+                .remove();
         }
 
     }
