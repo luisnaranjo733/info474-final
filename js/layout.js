@@ -47,6 +47,7 @@ We can also include parent table data on each seat if that helps.
 
 let TABLES = [];
 let SEATS = [];
+let DEFAULT_TABLE_FILL = 'grey';
 
 $(document).ready(function()
 {
@@ -133,31 +134,42 @@ $(document).ready(function()
     // (0, 0) is the top left corner of the svg NOT the window.
     // This means that a table placed at (0, 0) would actually end up at (0, 125) since the
     // navbar and toolbar are 125 pixels tall
+    // Can I add a color and id field to this so I can update the color to the correct table?
     let TABLE_LAYOUT = [
         {
             x: left_div_width + 70,
             y: 187.5,
-            type: TABLE_TYPE.one
+            type: TABLE_TYPE.one,
+            id: 1,
+            fill: DEFAULT_TABLE_FILL
         },
         {
             x: left_div_width + 175,
             y: 187.5,
-            type: TABLE_TYPE.one
+            type: TABLE_TYPE.one,
+            id: 2,
+            fill: DEFAULT_TABLE_FILL
         },
         {
             x: left_div_width + 490,
             y: 75,
-            type: TABLE_TYPE.two
+            type: TABLE_TYPE.two,
+            id: 3,
+            fill: DEFAULT_TABLE_FILL
         },
         {
             x: left_div_width + 290,
             y: 431.25,
-            type: TABLE_TYPE.two
+            type: TABLE_TYPE.two,
+            id: 4,
+            fill: DEFAULT_TABLE_FILL
         },
         {
             x: left_div_width + 490,
             y: 262.5,
-            type: TABLE_TYPE.three
+            type: TABLE_TYPE.three,
+            id: 5,
+            fill: DEFAULT_TABLE_FILL
         }
     ];
 
