@@ -21,7 +21,6 @@ $(function () {
             id: party_id_count
         }
     });
-    console.log(queue);
 
     // open bootstrap modal to display about section on click
     $('#about').click(() => $('#myModal').modal());
@@ -29,7 +28,15 @@ $(function () {
     // update party_pattern global var on select change
     $('select').change(() => {
         party_pattern = $('select').val();
-        randParties(party_pattern);
+        queue = randParties(party_pattern).map((generated_size, i) => {
+            party_id_count += 1;
+            return {
+                size: generated_size,
+                id: party_id_count
+            }
+        });
+        clearQueue(queue);
+        drawQueue();
         console.log(`Change the party pattern to ${party_pattern} and reset the queue`);
     });
 
@@ -103,14 +110,21 @@ $(function () {
         }
     };
 
+    function clearQueue(queue) {
+        svg.selectAll('.party').remove();
+        svg.selectAll('.text').remove();
+        drawQueue();
+    }
+
     function drawQueue(group) {
         let parties = svg.selectAll('.party').data(queue, party => party.id);
         let text = svg.selectAll('.text').data(queue, party => party.id);
 
         if (group)
         {
+            console.log(group);
             seatGroup(group, parties.exit())
-        }
+        } 
 
         parties
             .transition()
@@ -135,7 +149,6 @@ $(function () {
             .transition()
             .duration(500)
             .attr("x", (party, i) => {
-                console.log(party);
                 return QUEUE_SLOTS[i].x;
             })
             .attr("y", (party, i) => QUEUE_SLOTS[i].y + 5);
@@ -166,7 +179,6 @@ $(function () {
                 let selected_table = TABLES[i];
                 if (!seated_flag)
                 {
-                    console.log(groupCircle);
                     groupCircle
                         .transition()
                         .attr('cx', selected_table.table_x)

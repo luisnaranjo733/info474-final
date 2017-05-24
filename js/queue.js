@@ -6,7 +6,7 @@ var randParties = function(type){
     if (typeHolder != type) {
         parties = [];
     }
-    if (type == 'Skewed') {
+    if (type == 'Uniform') {
         for (i=0; i < max; i++) {
             parties.push(rnorm(4,1.5,true));
         }
