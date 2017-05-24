@@ -40,12 +40,12 @@ function rnorm(mean, stdev) {
     } while (s === 0 || s >= 1);
 
     rnorm.v2 = v2 * Math.sqrt(-2 * Math.log(s) / s);
-    return stdev * v1 * Math.sqrt(-2 * Math.log(s) / s) + mean;
+    return Math.floor(stdev * v1 * Math.sqrt(-2 * Math.log(s) / s) + mean);
   }
 
   v2 = rnorm.v2;
   rnorm.v2 = null;
-  return stdev * v2 + mean;
+  return Math.floor(stdev * v2 + mean);
 }
 
 rnorm.v2 = null;
@@ -176,5 +176,3 @@ function rlist(list) {
 // exports.rvcauchy = vectorize(rcauchy);
 // exports.rvbernoulli = vectorize(rbernoulli);
 // exports.rvlist = vectorize(rlist);
-
-// exports.histogram = histogram;
