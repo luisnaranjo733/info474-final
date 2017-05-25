@@ -115,7 +115,6 @@ $(function () {
     function clearQueue(queue) {
         svg.selectAll('.party').remove();
         svg.selectAll('.text').remove();
-        drawQueue();
     }
 
     function drawQueue(group) {
