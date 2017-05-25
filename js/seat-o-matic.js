@@ -1,38 +1,43 @@
 let SeatOMatic = function(nodes, edges) {
 
   let s = {}
-  let waits = []
-  let queue = []
+  let occupied_tables = []
+
+  let waiting_groups = []
+  let seated_groups = []
 
   s.step = function() {
-    waits = tick(waits, 1)
-    let seated = []
-    for (let i = 0; i < queue.length; i++) {
-      let seating = find_seating(queue[i])
-      if (seating.length > 0) {
-        let time = Math.floor((2.387 * queue[i] + 50.18) / 10)
-        each(seating, (s) => {
-          waits[s] = time
-        })
-        seated.push(i)
-      }
-    }
+    let done = tick(1)
 
-    queue = pullAt(queue, seated.sort((a,b) => {
-      return b - a
-    }))
+    let seated = []
+    waiting_groups = filter(waiting_groups, (group, i) => {
+      let seating = find_seating(group.size)
+      if (seating.length > 0) {
+        let time = Math.floor((2.387 * group.size + 50.18) / 10)
+        let seat_group = { group: group, wait: time, tables: seating }
+        seated_groups.push(seat_group) 
+        each(seating, (s) => {
+          occupied_tables[s] = true
+        })
+        seated.push(seat_group)
+      }
+
+      return seating.length > 0
+    })
+
+    return { done: done, seated: seated } 
   }
 
   s.addQueue = function(v) {
-    queue.push(v)
+    waiting_groups.push(v)
   }
 
-  s.waits = function() {
-    return waits
+  s.seated = function() {
+    return seated_groups
   }
 
   s.queue = function() {
-    return queue
+    return waiting_groups
   }
 
   function seq(size,group) {
@@ -44,7 +49,7 @@ let SeatOMatic = function(nodes, edges) {
     
     for (let e = 0; e < edges[n].length; e++) {
       let _e = edges[n][e]
-      if (group.indexOf(_e) < 0 && !waits[_e]) {
+      if (group.indexOf(_e) < 0 && !occupied_tables[_e]) {
         let diff = size - nodes[_e]
         if (diff >= -2 && diff < min_g.size) {
           group.push(_e)
@@ -59,7 +64,7 @@ let SeatOMatic = function(nodes, edges) {
    function find_seating(size) {
     let seqs = []
     for (let i = 0; i < nodes.length; i++) {
-      if (!waits[i]) {
+      if (!occupied_tables[i]) {
         let diff = size - nodes[i]
         seqs.push(seq(diff, [i]))
       }
@@ -77,17 +82,31 @@ let SeatOMatic = function(nodes, edges) {
     return []
   }
 
-  function pullAt(list, indexes) {
-    each(indexes, (index) => {
-      list.splice(index,1)
+  function tick(by) {
+    let done = []
+
+    seated_groups = filter(seated_groups, (g) => {
+      let val = max([0, g.wait - by], (i) => i)
+      g.wait = val
+
+      if (g.wait == 0) {
+        each(g.tables, (table) => {
+          occupied_tables[table] = false
+        })
+        done.push(g)
+      }
+
+      return g.wait == 0
     })
-    return list
+    return done
   }
 
-  function tick(list, by) {
-    return map(list, (item) => {
-      return max([0, item - by], (i) => i)
+  function filter(list, fn) {
+    let newList = []
+    each(list, (item, i) => {
+      if (!fn(item, i)) newList.push(item)
     })
+    return newList
   }
 
   function min(list, fn) {
@@ -157,7 +176,7 @@ let SeatOMatic = function(nodes, edges) {
 /**** EXAMPLE ******/
 // if you have node installed just run 'node seat-o-matic.js'
 
-// // UNCOMMENT
+// UNCOMMENT
 // let nodes = [2,2,4,4,6] // tables
 // let edges = [ // index is table, [] at index is possible other tables to group with
 //   [1],        // table 0 can be moved with table 1
@@ -168,17 +187,31 @@ let SeatOMatic = function(nodes, edges) {
 // ]
 
 // let seater = SeatOMatic(nodes, edges) // Make a seater object with tables and groupings
-// seater.addQueue(7)                    // add party of 7 to queue
-// seater.addQueue(3)                    // add party of 3 to queue
-// console.log("Wait times:", seater.waits())
-// console.log("Queue:", seater.queue())
-// seater.step()                         // step and seat anyone who can be seated
-// console.log("Wait times:", seater.waits())
-// console.log("Queue:", seater.queue())
-// seater.addQueue(2)                    // add party of 2 to queue
-// seater.addQueue(4)                    // add party of 4 to queue
-// console.log("Wait times:", seater.waits())
-// console.log("Queue:", seater.queue())
-// seater.step()                         // step and seat anyone who can be seated
-// console.log("Wait times:", seater.waits())
+// seater.addQueue({ id: 1, size: 7 })                    // add party of 7 to queue
+// seater.addQueue({ id: 2, size: 3 })                    // add party of 3 to queue
+// console.log("STEP", seater.step())                         // step and seat anyone who can be seated
+// seater.addQueue({ id: 3, size: 2 })                    // add party of 2 to queue
+// seater.addQueue({ id: 4, size: 4 })                    // add party of 4 to queue
+
+// console.log("STEP", seater.step())   
+// console.log("Seated Groups:", seater.seated())                      // step and seat anyone who can be seated
+// console.log("STEP", seater.step())   
+// console.log("Seated Groups:", seater.seated()) 
+// console.log("STEP", seater.step())   
+// console.log("Seated Groups:", seater.seated()) 
+// console.log("STEP", seater.step())   
+// console.log("Seated Groups:", seater.seated()) 
+
+// console.log("STEP", seater.step()) 
+// console.log("Seated Groups:", seater.seated()) 
+// console.log("STEP", seater.step()) 
+// console.log("Seated Groups:", seater.seated()) 
+// console.log("STEP", seater.step()) 
+// console.log("Seated Groups:", seater.seated()) 
+// console.log("STEP", seater.step()) 
+// console.log("Seated Groups:", seater.seated()) 
+// console.log("STEP", seater.step()) 
+// console.log("Queue:", seater.queue()) 
+// console.log("Seated Groups:", seater.seated()) 
+// console.log("Wait times:", seater.seated())
 // console.log("Queue:", seater.queue())
