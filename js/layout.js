@@ -199,7 +199,7 @@ $(document).ready(function()
             table_y: table.y,
             table_width: table.type.width,
             table_height: table.type.height,
-
+            table_fill: table.fill,
             seats: absolute_seats
         };
         _table_count += 1;

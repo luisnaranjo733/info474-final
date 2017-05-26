@@ -18,3 +18,12 @@ var randParties = function(type){
         return parties;
     }
 };
+
+let randParty = function(type)
+{
+    if (type == 'Uniform') {
+        return rnorm(4, 1.5, true);
+    } else if (type == 'Random') {
+        return runif(1, 6, true);
+    }
+};
