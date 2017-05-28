@@ -21,15 +21,20 @@ $(function () {
 
     let seater = SeatOMatic(nodes, edges);
 
+    let colorScale = d3.scaleOrdinal(d3.schemeCategory20);
+
     let queue = randParties(party_pattern).map((generated_size, i) => {
         let groupObject = {
             size: generated_size,
-            id: party_id_count
+            id: party_id_count,
+            color: colorScale(party_id_count)
         };
         party_id_count += 1;
         seater.addQueue(groupObject);
         return groupObject;
     });
+
+    
 
     // open bootstrap modal to display about section on click
     $('#about').click(() => $('#myModal').modal());
@@ -182,6 +187,8 @@ $(function () {
         let parties = svg.selectAll('.party').data(queue, party => party.id);
         let text = svg.selectAll('.text').data(queue, party => party.id);
 
+        
+
         if (groups)
         {
             seatGroups(groups.seated, parties.exit());
@@ -198,7 +205,7 @@ $(function () {
             .attr('class', 'party')
             .attr('id', (party) => 'group' + party.id)
             .attr('r', DEFAULT_CIRCLE_RADIUS)
-            .attr('fill', 'blue')
+            .attr('fill', party => colorScale(party.color))
             .attr('cx', queue_x)
             .attr('cy', $('#left-pane').height() + 100)
             .transition()
@@ -255,44 +262,95 @@ $(function () {
     */
     function seatGroups(groups, groupCircle)
     {
+        console.log(TABLES);
         console.log('seat groups');
-        console.log(groups);
+        // console.log(groups);
         console.log(groupCircle);
         if (groups.length > 0)
         {
+            let seated_guests = [];
+
+            groups.forEach(group => {
+                console.log(group);
+                let tables = group.tables.map(table_index => {
+                    return TABLES[table_index]
+                });
+                // console.log(tables);
+                tables.forEach(table => {
+                    let seats = table.seats.map(seat => {
+                        seat.color = group.group.color;
+                        seat.group_id = group.group.id;
+                        return seat;
+                    });
+                    seated_guests = _.concat(seated_guests, seats);
+                });
+            });
+            console.log(seated_guests);
+
+            let seated = svg.selectAll('.seated_party').data(seated_guests, seat => seat.seat_id);
+            console.log(seated);
+
+            seated.enter()
+                .append('circle')
+                .attr('class', 'seated_party')
+                .attr('r', DEFAULT_CIRCLE_RADIUS)
+                .attr('fill', seat => seat.color)
+                .attr('cx', 200)
+                .attr('cy', 200)
+                .transition()
+                .duration(1000)
+                .attr('cx', seat => seat.seat_x)
+                .attr('cy', seat => seat.seat_y)
+                
+
+    //  parties.enter()
+    //         .append('circle')
+    //         .attr('class', 'party')
+    //         .attr('id', (party) => 'group' + party.id)
+    //         .attr('r', DEFAULT_CIRCLE_RADIUS)
+    //         .attr('fill', party => colorScale(party.color))
+    //         .attr('cx', queue_x)
+    //         .attr('cy', $('#left-pane').height() + 100)
+    //         .transition()
+    //         .delay(circle => circle.id * 150)
+    //         .attr('cx', (party, i) => QUEUE_SLOTS[i].x)
+    //         .attr('cy', (party, i) => QUEUE_SLOTS[i].y);
+
             // map of group id to table id array
             // ex: group 0 is seated at tables 1 and 2
             // {
             //     0: [1,2],
             // }
-            let groupTableMap = {};
-            for (let i = 0; i < groups.length; i++)
-            {
-                let group = groups[i].group;
-                groupTableMap[group.id] = groups[i].tables;
-            }
+            // let groupTableMap = {};
+            // for (let i = 0; i < groups.length; i++)
+            // {
+            //     let group = groups[i].group;
+            //     groupTableMap[group.id] = groups[i].tables;
+            // }
 
-            let waiting_area = {
-                x: $('#left-pane').width() + 125,
-                y: 170
-            }
+            // let waiting_area = {
+            //     x: $('#left-pane').width() + 125,
+            //     y: 170
+            // }
 
-            groupCircle
-                .attr('class', 'seated_party')
-                .transition()
-                .attr('cx', function (group)
-                {
-                    // tables where this group should be seated
-                    let tables = groupTableMap[group.id];
-                    let selected_table = TABLES[tables[0]];
-                    return selected_table.table_x;
-                })
-                .attr('cy', function (group)
-                {
-                    let tables = groupTableMap[group.id];
-                    let selected_table = TABLES[tables[0]];
-                    return selected_table.table_y;
-                });
+            
+
+            // groupCircle
+            //     .attr('class', 'seated_party')
+            //     .transition()
+            //     .attr('cx', function (group)
+            //     {
+            //         // tables where this group should be seated
+            //         let tables = groupTableMap[group.id];
+            //         let selected_table = TABLES[tables[0]];
+            //         return selected_table.table_x;
+            //     })
+            //     .attr('cy', function (group)
+            //     {
+            //         let tables = groupTableMap[group.id];
+            //         let selected_table = TABLES[tables[0]];
+            //         return selected_table.table_y;
+            //     });
 
             // add the number of people that were just seated to the queue
             addQueue(groups.length);
