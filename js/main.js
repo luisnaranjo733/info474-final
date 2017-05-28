@@ -58,6 +58,9 @@ $(function () {
         let result = seater.step();
         // returns object with two fields seated and done,
         // both are arrays and both will contain. wait time, id group, and table id
+        // console.log('step');
+        // console.log(result);
+        // console.log(queue.length);
         for (let i = 0; i < result.seated.length; i++)
         {
             let groupId = result.seated[i].group.id;
@@ -70,7 +73,9 @@ $(function () {
                 }
             }
         }
-        console.log(result);
+        // console.log(queue.length);
+        // console.log(result.done);
+        // console.log(result.seated);
         if (result.done.length > 0)
         {
             removeGroups(result.done, function()
@@ -94,31 +99,33 @@ $(function () {
     //  Draw the static elements --------------------------------------
 
     // draw the tables
-    function drawTables()
+    function drawTableLayout()
     {
-        let tables = svg.selectAll('rect').data(TABLES);
+        let tables = svg.selectAll('.restaurant-table').data(TABLES);
         tables.enter().append('rect')
+            .attr('class', 'restaurant-table')
             .attr('x', table => table.table_x)
             .attr('y', table => table.table_y)
             .attr('width', table => table.table_width)
             .attr('height', table => table.table_height)
             .attr('fill', table => table.table_fill);
+
+        // draw the seats
+        let seats = svg.selectAll('.table-seat').data(SEATS);
+        seats.enter().append('circle')
+            .attr('class', 'table-seat')
+            .attr('r', DEFAULT_CIRCLE_RADIUS)
+            .attr('fill', DEFAULT_SEAT_FILL)
+            // .attr('cx', 200)
+            // .attr('cy', 200)
+            // .transition() // example of how the queue transition might look (even though these are the table seats rn lol)
+            // .delay(seat => seat.seat_id * 250)
+            .attr('cx', seat => seat.seat_x)
+            .attr('cy', seat => seat.seat_y);
     }
+    drawTableLayout();
 
-    drawTables();
 
-    // draw the seats
-    let seats = svg.selectAll('.seat').data(SEATS);
-    seats.enter().append('circle')
-        .attr('class', 'seat')
-        .attr('r', DEFAULT_CIRCLE_RADIUS)
-        .attr('fill', DEFAULT_SEAT_FILL)
-        // .attr('cx', 200)
-        // .attr('cy', 200)
-        // .transition() // example of how the queue transition might look (even though these are the table seats rn lol)
-        // .delay(seat => seat.seat_id * 250)
-        .attr('cx', seat => seat.seat_x)
-        .attr('cy', seat => seat.seat_y);
 
     // Finish drawing the static elements ------------------------------------------------------
 
@@ -186,7 +193,8 @@ $(function () {
             .attr('cx', (party, i) => QUEUE_SLOTS[i].x)
             .attr('cy', (party, i) => QUEUE_SLOTS[i].y)
 
-        parties.enter().append('circle')
+        parties.enter()
+            .append('circle')
             .attr('class', 'party')
             .attr('id', (party) => 'group' + party.id)
             .attr('r', DEFAULT_CIRCLE_RADIUS)
@@ -235,21 +243,46 @@ $(function () {
         callback();
     }
 
+    /*
+    Visually seat parties from the queue to their tables.
+    This method will take a selection of exiting group circles,
+    and directly move them to their tables instead of deleting them from the DOM
+
+    Params:
+        groups is the array of group objects retrieved from the seater's step function.
+            it represents the groups that are being seated and where they are being seated/
+        groupCircle is the d3 selection of exiting group circles from our queue data join
+    */
     function seatGroups(groups, groupCircle)
     {
+        console.log('seat groups');
+        console.log(groups);
+        console.log(groupCircle);
         if (groups.length > 0)
         {
+            // map of group id to table id array
+            // ex: group 0 is seated at tables 1 and 2
+            // {
+            //     0: [1,2],
+            // }
             let groupTableMap = {};
             for (let i = 0; i < groups.length; i++)
             {
                 let group = groups[i].group;
                 groupTableMap[group.id] = groups[i].tables;
             }
+
+            let waiting_area = {
+                x: $('#left-pane').width() + 125,
+                y: 170
+            }
+
             groupCircle
                 .attr('class', 'seated_party')
                 .transition()
                 .attr('cx', function (group)
                 {
+                    // tables where this group should be seated
                     let tables = groupTableMap[group.id];
                     let selected_table = TABLES[tables[0]];
                     return selected_table.table_x;
@@ -267,6 +300,8 @@ $(function () {
         }
     }
 
+    // console.log('TABLES');
+    // console.log(TABLES);
     drawQueue();
 
 
