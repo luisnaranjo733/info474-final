@@ -21,7 +21,14 @@ $(function () {
 
     let seater = SeatOMatic(nodes, edges);
 
-    let colorScale = d3.scaleOrdinal(d3.schemeCategory20);
+    // let colorScale = d3.scaleOrdinal(d3.schemeCategory20);
+    let colorScale = function(i) {
+        let color_scheme = d3.schemeCategory20;
+        let index = (i % color_scheme.length) + 1
+        let color = color_scheme[index];
+        console.log(`i: ${i}`, `color: ${color}`);
+        return color;
+    };
 
     let queue = randParties(party_pattern).map((generated_size, i) => {
         let groupObject = {
@@ -175,7 +182,8 @@ $(function () {
             let groupObject =
                 {
                     id: party_id_count,
-                    size: randParty(party_pattern)
+                    size: randParty(party_pattern),
+                    color: colorScale(party_id_count)
                 };
             party_id_count += 1;
             queue.push(groupObject);
@@ -205,7 +213,7 @@ $(function () {
             .attr('class', 'party')
             .attr('id', (party) => 'group' + party.id)
             .attr('r', DEFAULT_CIRCLE_RADIUS)
-            .attr('fill', party => colorScale(party.color))
+            .attr('fill', party => party.color)
             .attr('cx', queue_x)
             .attr('cy', $('#left-pane').height() + 100)
             .transition()
@@ -242,9 +250,15 @@ $(function () {
         {
             let group = groups[i].group;
             let tables = groups[i].tables;
-            d3.select('#group' + group.id)
+
+            let x = $('#left-pane').width() + $('#right-pane').width() + 50;
+            let y = 200;
+            console.log(`(${x}, ${y})`);
+            d3.select('.group' + group.id)
                 .transition()
-                .attr('r', 0)
+                .duration(1000)
+                .attr('cx', x)
+                .attr('cy', y)
                 .remove();
         }
         callback();
@@ -282,6 +296,9 @@ $(function () {
                         seat.group_id = group.group.id;
                         return seat;
                     });
+                    let diff = table.seats.length - group.group.size;
+                    seats = _.slice(seats, 0, seats.length - diff);
+
                     seated_guests = _.concat(seated_guests, seats);
                 });
             });
@@ -293,28 +310,18 @@ $(function () {
             seated.enter()
                 .append('circle')
                 .attr('class', 'seated_party')
+                .attr('class', seat => `group${seat.group_id}`)
                 .attr('r', DEFAULT_CIRCLE_RADIUS)
                 .attr('fill', seat => seat.color)
                 .attr('cx', 200)
                 .attr('cy', 200)
                 .transition()
-                .duration(1000)
+                .duration(1500)
                 .attr('cx', seat => seat.seat_x)
-                .attr('cy', seat => seat.seat_y)
-                
+                .attr('cy', seat => seat.seat_y);
 
-    //  parties.enter()
-    //         .append('circle')
-    //         .attr('class', 'party')
-    //         .attr('id', (party) => 'group' + party.id)
-    //         .attr('r', DEFAULT_CIRCLE_RADIUS)
-    //         .attr('fill', party => colorScale(party.color))
-    //         .attr('cx', queue_x)
-    //         .attr('cy', $('#left-pane').height() + 100)
-    //         .transition()
-    //         .delay(circle => circle.id * 150)
-    //         .attr('cx', (party, i) => QUEUE_SLOTS[i].x)
-    //         .attr('cy', (party, i) => QUEUE_SLOTS[i].y);
+            groupCircle.remove();
+
 
             // map of group id to table id array
             // ex: group 0 is seated at tables 1 and 2
