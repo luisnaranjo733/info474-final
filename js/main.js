@@ -174,6 +174,16 @@ $(function () {
     }
 
     function drawQueue(groups) {
+
+        let temp_counter = 1;
+        // set a temporary id that will always start from 1 every time we draw the queue
+        // this temp id is needed for the queue transition
+        queue = queue.map(party => {
+            party.temp_id = temp_counter;
+            temp_counter += 1;
+            return party;
+        })
+
         let parties = svg.selectAll('.party').data(queue, party => party.id);
         let text = svg.selectAll('.text').data(queue, party => party.id);     
 
@@ -182,27 +192,32 @@ $(function () {
             seatGroups(groups.seated, parties.exit());
         }
 
+        // update parties in queue
         parties
             .transition()
             .duration(500)
             .attr('cx', (party, i) => QUEUE_SLOTS[i].x)
             .attr('cy', (party, i) => QUEUE_SLOTS[i].y)
 
+        // enter new parties to queue
         parties.enter()
             .append('circle')
             .attr('class', 'party')
-            .attr('id', (party) => 'group' + party.id)
+            .attr('data-id', party => party.id)
             .attr('r', DEFAULT_CIRCLE_RADIUS)
             .attr('fill', party => party.color)
             .attr('cx', queue_x)
             .attr('cy', $('#left-pane').height() + 100)
             .transition()
-            .delay(circle => circle.id * 150)
+            .delay(circle => circle.temp_id * 150)
             .attr('cx', (party, i) => QUEUE_SLOTS[i].x)
             .attr('cy', (party, i) => QUEUE_SLOTS[i].y);
 
+        
+        // delete exiting text
         text.exit().remove();
 
+        // update queue text
         text
             .transition()
             .duration(500)
@@ -211,6 +226,7 @@ $(function () {
             })
             .attr("y", (party, i) => QUEUE_SLOTS[i].y + 5);
 
+        // add entering text to queue
         text.enter()
             .append('text')
             .attr('class', 'text')
@@ -220,7 +236,10 @@ $(function () {
             .style("fill", "white")
             .text(function(q){return +q.size});
 
-        text.exit().remove();
+        // delete the temporary id as it is no longer needed after this point
+        queue.forEach(party => {
+            delete party.temp_id;
+        })
 
     }
 
