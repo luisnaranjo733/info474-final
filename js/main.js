@@ -62,12 +62,10 @@ $(function () {
         // pop a party off the queue and seat them according to the algorithm
         let algorithm_is_enabled = $('#algorithm-enabled').is(':checked');
 
-        console.log(seater.queue());
         let result = seater.step();
         // returns object with two fields seated and done,
         // both are arrays and both will contain. wait time, id group, and table id
         console.log('step');
-        
         console.log(result);
 
         // remove parties from the queue that are going to get seated
@@ -83,7 +81,7 @@ $(function () {
 
 
         if (result.done.length > 0) {
-            removeGroups(result.done, function () {
+            removeSeatedGroups(result.done, function () {
                 drawQueue(result);
             });
         }
@@ -181,9 +179,6 @@ $(function () {
             return party;
         })
 
-        console.log('queue');
-        console.log(queue);
-
         let parties = svg.selectAll('.party').data(queue, party => party.id);
         let text = svg.selectAll('.text').data(queue, party => party.id);
 
@@ -240,23 +235,44 @@ $(function () {
 
     }
 
-    function removeGroups(groups, callback) {
+    function removeUnseatedGroups(groups, callback) {
+        let group_type_selector = '.unseated_party.group';
+
         for (let i = 0; i < groups.length; i++) {
             let group = groups[i].group;
             let tables = groups[i].tables;
 
             let x = $('#left-pane').width() + $('#right-pane').width() + 50;
             let y = 200;
-            console.log(`(${x}, ${y})`);
-            console.log(groups[0])
-            d3.select('.seated_party.group' + group.id)
+            d3.select(group_type_selector + group.id)
+                .remove();
+        }
+        callback();
+
+    }
+
+    function removeSeatedGroups(groups, callback) {
+        let group_type_selector = '.seated_party.group';
+
+        for (let i = 0; i < groups.length; i++) {
+            let group = groups[i].group;
+            let tables = groups[i].tables;
+
+            let x = $('#left-pane').width() + $('#right-pane').width() + 50;
+            let y = 200;
+            d3.select(group_type_selector + group.id)
                 .transition()
                 .duration(1000)
-                .attr('cx', x)
+                .attr('cx', group => {
+                    console.log('deleting seated group');
+                    console.log(group);
+                    return x;
+                })
                 .attr('cy', y)
                 .remove();
         }
         callback();
+
     }
 
     /*
@@ -279,9 +295,6 @@ $(function () {
         if (groups.length > 0) {
             let seated_guests = [];
             groups.forEach(group => {
-                console.log('group');
-                console.log(group);
-                
                 // Transform seatomatic's output of int[] to table[] from layout.js with pixel coordinates
                 let tables = group.tables.map(table_index => TABLES[table_index]);
 
@@ -302,7 +315,6 @@ $(function () {
 
 
             let seated = svg.selectAll('.seated_party').data(seated_guests, seat => seat.seat_id);
-            console.log(seated_guests);
 
             seated.enter()
                 .append('circle')
@@ -317,11 +329,14 @@ $(function () {
                 .attr('cx', seat => seat.seat_x)
                 .attr('cy', seat => seat.seat_y);
 
+            removeUnseatedGroups(groups, function() {
+                console.log('CALLBACK');
+                // add the number of people that were just seated to the queue
+                addQueue(groups.length);
+                drawQueue();
+            });
 
 
-            // add the number of people that were just seated to the queue
-            addQueue(groups.length);
-            drawQueue();
         }
     }
 
