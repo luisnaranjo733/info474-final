@@ -181,6 +181,9 @@ $(function () {
             return party;
         })
 
+        console.log('queue');
+        console.log(queue);
+
         let parties = svg.selectAll('.party').data(queue, party => party.id);
         let text = svg.selectAll('.text').data(queue, party => party.id);
 
@@ -198,8 +201,8 @@ $(function () {
         // enter new parties to queue
         parties.enter()
             .append('circle')
-            .attr('class', 'unseated_party')
-            .attr('data-id', party => party.id)
+            .attr('class', party => `party group${party.id}`)
+            .attr('data-status','unseated')
             .attr('r', DEFAULT_CIRCLE_RADIUS)
             .attr('fill', party => party.color)
             .attr('cx', queue_x)
@@ -303,8 +306,8 @@ $(function () {
 
             seated.enter()
                 .append('circle')
-                .attr('class', 'seated_party')
-                .attr('data-id', party => party.group_id)
+                .attr('class', seat => `party group${seat.group_id}`)
+                .attr('data-status','seated')
                 .attr('r', DEFAULT_CIRCLE_RADIUS)
                 .attr('fill', seat => seat.color)
                 .attr('cx', 200)
