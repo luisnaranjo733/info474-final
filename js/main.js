@@ -201,8 +201,7 @@ $(function () {
         // enter new parties to queue
         parties.enter()
             .append('circle')
-            .attr('class', party => `party group${party.id}`)
-            .attr('data-status','unseated')
+            .attr('class', party => `unseated_party group${party.id}`)
             .attr('r', DEFAULT_CIRCLE_RADIUS)
             .attr('fill', party => party.color)
             .attr('cx', queue_x)
@@ -249,7 +248,8 @@ $(function () {
             let x = $('#left-pane').width() + $('#right-pane').width() + 50;
             let y = 200;
             console.log(`(${x}, ${y})`);
-            d3.select('.group' + group.id)
+            console.log(groups[0])
+            d3.select('.seated_party.group' + group.id)
                 .transition()
                 .duration(1000)
                 .attr('cx', x)
@@ -306,7 +306,7 @@ $(function () {
 
             seated.enter()
                 .append('circle')
-                .attr('class', seat => `party group${seat.group_id}`)
+                .attr('class', seat => `seated_party group${seat.group_id}`)
                 .attr('data-status','seated')
                 .attr('r', DEFAULT_CIRCLE_RADIUS)
                 .attr('fill', seat => seat.color)
