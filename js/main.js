@@ -8,21 +8,24 @@ $(function () {
 
     let nodes = TABLES;
     let edges = [ // index is table, [] at index is possible other tables to group with
-      [1],        // table 0 can be moved with table 1
-      [0,2,3,4],  // table 1 can be moved with tables 0,2,3,4
-      [4],        // table 2 can be moved with table 4
-      [4],        // table 3 can be moved with table 4
-      [],         // table 4 cant be moved
+        [1],        // table 0 can be moved with table 1
+        [0, 2, 3, 4],  // table 1 can be moved with tables 0,2,3,4
+        [4],        // table 2 can be moved with table 4
+        [4],        // table 3 can be moved with table 4
+        [],         // table 4 cant be moved
     ];
 
     let seater = SeatOMatic(nodes, edges);
 
-    let colorScale = function(i) {
+    let colorScale = function (i) {
         let color_scheme = d3.schemeCategory20;
         let index = (i % color_scheme.length) + 1
         let color = color_scheme[index];
         return color;
     };
+
+    // temporarily override random number gen code for easier debugging
+    randParties = (pattern) => [5, 4, 3, 2, 1];
 
     let queue = randParties(party_pattern).map((generated_size, i) => {
         let groupObject = {
@@ -35,7 +38,7 @@ $(function () {
         return groupObject;
     });
 
-    
+
 
     // open bootstrap modal to display about section on click
     $('#about').click(() => $('#myModal').modal());
@@ -58,36 +61,33 @@ $(function () {
     $('#step-btn').click(() => {
         // pop a party off the queue and seat them according to the algorithm
         let algorithm_is_enabled = $('#algorithm-enabled').is(':checked');
-        // console.log(`Place the next party in the queue`);
-        // console.log(`algorithm_is_enabled=${algorithm_is_enabled} and party_pattern=${party_pattern}`);
+
+        console.log(seater.queue());
         let result = seater.step();
         // returns object with two fields seated and done,
         // both are arrays and both will contain. wait time, id group, and table id
         console.log('step');
+        
         console.log(result);
 
-        for (let i = 0; i < result.seated.length; i++)
-        {
+        // remove parties from the queue that are going to get seated
+        for (let i = 0; i < result.seated.length; i++) {
             let groupId = result.seated[i].group.id;
-            for (let j = 0; j < queue.length; j++)
-            {
+            for (let j = 0; j < queue.length; j++) {
                 let group = queue[j];
-                if (group.id == groupId)
-                {
+                if (group.id == groupId) {
                     queue.splice(j, 1);
                 }
             }
         }
 
-        if (result.done.length > 0)
-        {
-            removeGroups(result.done, function()
-            {
+
+        if (result.done.length > 0) {
+            removeGroups(result.done, function () {
                 drawQueue(result);
             });
         }
-        else if (result.seated.length > 0)
-        {
+        else if (result.seated.length > 0) {
             drawQueue(result);
         }
 
@@ -98,8 +98,7 @@ $(function () {
     //  Draw the static elements --------------------------------------
 
     // draw the tables
-    function drawTableLayout()
-    {
+    function drawTableLayout() {
         let tables = svg.selectAll('.restaurant-table').data(TABLES);
         tables.enter().append('rect')
             .attr('class', 'restaurant-table')
@@ -157,10 +156,8 @@ $(function () {
     }
 
     // int count : the number of parties/groups you want to add to the queue
-    function addQueue(count)
-    {
-        for (let i = 0; i < count; i++)
-        {
+    function addQueue(count) {
+        for (let i = 0; i < count; i++) {
             let groupObject =
                 {
                     id: party_id_count,
@@ -185,10 +182,9 @@ $(function () {
         })
 
         let parties = svg.selectAll('.party').data(queue, party => party.id);
-        let text = svg.selectAll('.text').data(queue, party => party.id);     
+        let text = svg.selectAll('.text').data(queue, party => party.id);
 
-        if (groups)
-        {
+        if (groups) {
             seatGroups(groups.seated, parties.exit());
         }
 
@@ -202,7 +198,7 @@ $(function () {
         // enter new parties to queue
         parties.enter()
             .append('circle')
-            .attr('class', 'party')
+            .attr('class', 'unseated_party')
             .attr('data-id', party => party.id)
             .attr('r', DEFAULT_CIRCLE_RADIUS)
             .attr('fill', party => party.color)
@@ -213,7 +209,6 @@ $(function () {
             .attr('cx', (party, i) => QUEUE_SLOTS[i].x)
             .attr('cy', (party, i) => QUEUE_SLOTS[i].y);
 
-        
         // delete exiting text
         text.exit().remove();
 
@@ -234,7 +229,7 @@ $(function () {
             .attr("y", (party, i) => QUEUE_SLOTS[i].y + 5)
             .style("text-anchor", "middle")
             .style("fill", "white")
-            .text(function(q){return +q.size});
+            .text(function (q) { return +q.size });
 
         // delete the temporary id as it is no longer needed after this point
         queue.forEach(party => {
@@ -243,10 +238,8 @@ $(function () {
 
     }
 
-    function removeGroups(groups, callback)
-    {
-        for (let i = 0; i < groups.length; i++)
-        {
+    function removeGroups(groups, callback) {
+        for (let i = 0; i < groups.length; i++) {
             let group = groups[i].group;
             let tables = groups[i].tables;
 
@@ -273,26 +266,31 @@ $(function () {
             it represents the groups that are being seated and where they are being seated/
         groupCircle is the d3 selection of exiting group circles from our queue data join
     */
-    function seatGroups(groups, groupCircle)
-    {
+    function seatGroups(groups, groupCircle) {
+        // this should be deleting parties in the queue that have been spliced from the queue
+        // but it doesn't work for some reason.
+        // Parties are being copied to the restaurant, but their original queue counterparts are not being deleted as expected.
+        groupCircle.remove();
 
-        if (groups.length > 0)
-        {
+
+        if (groups.length > 0) {
             let seated_guests = [];
-
             groups.forEach(group => {
+                console.log('group');
+                console.log(group);
+                
+                // Transform seatomatic's output of int[] to table[] from layout.js with pixel coordinates
+                let tables = group.tables.map(table_index => TABLES[table_index]);
 
-                let tables = group.tables.map(table_index => {
-                    return TABLES[table_index]
-                });
-    
                 tables.forEach(table => {
                     let seats = table.seats.map(seat => {
                         seat.color = group.group.color;
                         seat.group_id = group.group.id;
                         return seat;
                     });
+                    // figure out how many empty seats there should be
                     let diff = table.seats.length - group.group.size;
+                    // remove some seats to simulate empty seats
                     seats = _.slice(seats, 0, seats.length - diff);
 
                     seated_guests = _.concat(seated_guests, seats);
@@ -301,11 +299,12 @@ $(function () {
 
 
             let seated = svg.selectAll('.seated_party').data(seated_guests, seat => seat.seat_id);
+            console.log(seated_guests);
 
             seated.enter()
                 .append('circle')
                 .attr('class', 'seated_party')
-                .attr('class', seat => `group${seat.group_id}`)
+                .attr('data-id', party => party.group_id)
                 .attr('r', DEFAULT_CIRCLE_RADIUS)
                 .attr('fill', seat => seat.color)
                 .attr('cx', 200)
@@ -315,7 +314,7 @@ $(function () {
                 .attr('cx', seat => seat.seat_x)
                 .attr('cy', seat => seat.seat_y);
 
-            groupCircle.remove();
+
 
             // add the number of people that were just seated to the queue
             addQueue(groups.length);
