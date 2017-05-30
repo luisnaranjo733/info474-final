@@ -200,7 +200,8 @@ $(document).ready(function()
             table_width: table.type.width,
             table_height: table.type.height,
             table_fill: table.fill,
-            seats: absolute_seats
+            seats: absolute_seats,
+            seat_count: absolute_seats.length
         };
         _table_count += 1;
         return table;

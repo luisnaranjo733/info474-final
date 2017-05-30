@@ -6,11 +6,7 @@ $(function () {
 
     let party_pattern = 'Random';
 
-    // let tables_seats = TABLES.map(function (table)
-    // {
-    //     return table.seats.length;
-    // });
-    let nodes = [2,2,4,4,6]; // tables
+    let nodes = TABLES;
     let edges = [ // index is table, [] at index is possible other tables to group with
       [1],        // table 0 can be moved with table 1
       [0,2,3,4],  // table 1 can be moved with tables 0,2,3,4
@@ -21,12 +17,10 @@ $(function () {
 
     let seater = SeatOMatic(nodes, edges);
 
-    // let colorScale = d3.scaleOrdinal(d3.schemeCategory20);
     let colorScale = function(i) {
         let color_scheme = d3.schemeCategory20;
         let index = (i % color_scheme.length) + 1
         let color = color_scheme[index];
-        console.log(`i: ${i}`, `color: ${color}`);
         return color;
     };
 
@@ -58,7 +52,6 @@ $(function () {
         });
         clearQueue(queue);
         drawQueue();
-        console.log(`Change the party pattern to ${party_pattern} and reset the queue`);
     });
 
     // handle stepping through the algorithm
@@ -70,9 +63,9 @@ $(function () {
         let result = seater.step();
         // returns object with two fields seated and done,
         // both are arrays and both will contain. wait time, id group, and table id
-        // console.log('step');
-        // console.log(result);
-        // console.log(queue.length);
+        console.log('step');
+        console.log(result);
+
         for (let i = 0; i < result.seated.length; i++)
         {
             let groupId = result.seated[i].group.id;
@@ -85,9 +78,7 @@ $(function () {
                 }
             }
         }
-        // console.log(queue.length);
-        // console.log(result.done);
-        // console.log(result.seated);
+
         if (result.done.length > 0)
         {
             removeGroups(result.done, function()
@@ -103,10 +94,6 @@ $(function () {
     });
 
     let svg = d3.select('#main-svg');
-
-    // global variables defined in the layout.js file
-    // console.log(TABLES);
-    // console.log(SEATS);
 
     //  Draw the static elements --------------------------------------
 
@@ -128,10 +115,6 @@ $(function () {
             .attr('class', 'table-seat')
             .attr('r', DEFAULT_CIRCLE_RADIUS)
             .attr('fill', DEFAULT_SEAT_FILL)
-            // .attr('cx', 200)
-            // .attr('cy', 200)
-            // .transition() // example of how the queue transition might look (even though these are the table seats rn lol)
-            // .delay(seat => seat.seat_id * 250)
             .attr('cx', seat => seat.seat_x)
             .attr('cy', seat => seat.seat_y);
     }
@@ -178,7 +161,6 @@ $(function () {
     {
         for (let i = 0; i < count; i++)
         {
-
             let groupObject =
                 {
                     id: party_id_count,
@@ -193,9 +175,7 @@ $(function () {
 
     function drawQueue(groups) {
         let parties = svg.selectAll('.party').data(queue, party => party.id);
-        let text = svg.selectAll('.text').data(queue, party => party.id);
-
-        
+        let text = svg.selectAll('.text').data(queue, party => party.id);     
 
         if (groups)
         {
@@ -276,20 +256,17 @@ $(function () {
     */
     function seatGroups(groups, groupCircle)
     {
-        console.log(TABLES);
-        console.log('seat groups');
-        // console.log(groups);
-        console.log(groupCircle);
+
         if (groups.length > 0)
         {
             let seated_guests = [];
 
             groups.forEach(group => {
-                console.log(group);
+
                 let tables = group.tables.map(table_index => {
                     return TABLES[table_index]
                 });
-                // console.log(tables);
+    
                 tables.forEach(table => {
                     let seats = table.seats.map(seat => {
                         seat.color = group.group.color;
@@ -302,10 +279,9 @@ $(function () {
                     seated_guests = _.concat(seated_guests, seats);
                 });
             });
-            console.log(seated_guests);
+
 
             let seated = svg.selectAll('.seated_party').data(seated_guests, seat => seat.seat_id);
-            console.log(seated);
 
             seated.enter()
                 .append('circle')
@@ -322,51 +298,12 @@ $(function () {
 
             groupCircle.remove();
 
-
-            // map of group id to table id array
-            // ex: group 0 is seated at tables 1 and 2
-            // {
-            //     0: [1,2],
-            // }
-            // let groupTableMap = {};
-            // for (let i = 0; i < groups.length; i++)
-            // {
-            //     let group = groups[i].group;
-            //     groupTableMap[group.id] = groups[i].tables;
-            // }
-
-            // let waiting_area = {
-            //     x: $('#left-pane').width() + 125,
-            //     y: 170
-            // }
-
-            
-
-            // groupCircle
-            //     .attr('class', 'seated_party')
-            //     .transition()
-            //     .attr('cx', function (group)
-            //     {
-            //         // tables where this group should be seated
-            //         let tables = groupTableMap[group.id];
-            //         let selected_table = TABLES[tables[0]];
-            //         return selected_table.table_x;
-            //     })
-            //     .attr('cy', function (group)
-            //     {
-            //         let tables = groupTableMap[group.id];
-            //         let selected_table = TABLES[tables[0]];
-            //         return selected_table.table_y;
-            //     });
-
             // add the number of people that were just seated to the queue
             addQueue(groups.length);
             drawQueue();
         }
     }
 
-    // console.log('TABLES');
-    // console.log(TABLES);
     drawQueue();
 
 

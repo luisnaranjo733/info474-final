@@ -50,7 +50,7 @@ let SeatOMatic = function(nodes, edges) {
     for (let e = 0; e < edges[n].length; e++) {
       let _e = edges[n][e]
       if (group.indexOf(_e) < 0 && !occupied_tables[_e]) {
-        let diff = size - nodes[_e]
+        let diff = size - nodes[_e].seat_count
         if (diff >= -2 && diff < min_g.size) {
           group.push(_e)
           min_g = seq(diff,copy(group))
@@ -65,7 +65,7 @@ let SeatOMatic = function(nodes, edges) {
     let seqs = []
     for (let i = 0; i < nodes.length; i++) {
       if (!occupied_tables[i]) {
-        let diff = size - nodes[i]
+        let diff = size - nodes[i].seat_count
         seqs.push(seq(diff, [i]))
       }
     }
