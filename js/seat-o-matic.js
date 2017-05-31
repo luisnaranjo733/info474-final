@@ -6,12 +6,12 @@ let SeatOMatic = function(nodes, edges) {
   let waiting_groups = []
   let seated_groups = []
 
-  s.step = function() {
+  s.step = function(isBad) {
     let done = tick(1)
 
     let seated = []
     waiting_groups = filter(waiting_groups, (group, i) => {
-      let seating = find_seating(group.size)
+      let seating = isBad ? bad_seating(group.size) : good_seating(group.size)
       if (seating.length > 0) {
         let time = Math.floor((2.387 * group.size + 50.18) / 10)
         let seat_group = { group: group, wait: time, tables: seating }
@@ -61,7 +61,16 @@ let SeatOMatic = function(nodes, edges) {
     return min_g
   } 
 
-   function find_seating(size) {
+  function bad_seating(size) {
+    for (let i = 0; i < nodes.length; i++) {
+      if (!occupied_tables[i] && size - nodes[i].seat_count <= 2) {
+        return [i]
+      }
+    }
+    return []
+  }
+
+  function good_seating(size) {
     let seqs = []
     for (let i = 0; i < nodes.length; i++) {
       if (!occupied_tables[i]) {
@@ -177,7 +186,7 @@ let SeatOMatic = function(nodes, edges) {
 // if you have node installed just run 'node seat-o-matic.js'
 
 // UNCOMMENT
-// let nodes = [2,2,4,4,6] // tables
+// let nodes = [{seat_count: 2},{seat_count: 2},{seat_count: 4},{seat_count: 4},{ seat_count: 6}] // tables
 // let edges = [ // index is table, [] at index is possible other tables to group with
 //   [1],        // table 0 can be moved with table 1
 //   [0,2,3,4],  // table 1 can be moved with tables 0,2,3,4
@@ -189,7 +198,7 @@ let SeatOMatic = function(nodes, edges) {
 // let seater = SeatOMatic(nodes, edges) // Make a seater object with tables and groupings
 // seater.addQueue({ id: 1, size: 7 })                    // add party of 7 to queue
 // seater.addQueue({ id: 2, size: 3 })                    // add party of 3 to queue
-// console.log("STEP", seater.step())                         // step and seat anyone who can be seated
+// console.log("STEP", seater.step(true))                         // step and seat anyone who can be seated
 // seater.addQueue({ id: 3, size: 2 })                    // add party of 2 to queue
 // seater.addQueue({ id: 4, size: 4 })                    // add party of 4 to queue
 
