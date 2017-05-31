@@ -313,19 +313,31 @@ $(function () {
                 });
             });
 
+            let transition_counter = 0;
+
+            seated_guests = seated_guests.map(guest => {
+                guest.transition_id = transition_counter;
+                transition_counter += 1;
+                return guest;
+            })
 
             let seated = svg.selectAll('.seated_party').data(seated_guests, seat => seat.seat_id);
-
             seated.enter()
                 .append('circle')
                 .attr('class', seat => `seated_party group${seat.group_id}`)
                 .attr('data-status','seated')
                 .attr('r', DEFAULT_CIRCLE_RADIUS)
                 .attr('fill', seat => seat.color)
-                .attr('cx', 200)
-                .attr('cy', 200)
+                .attr('cx', seat => {
+                    let queue_seat = d3.select(`.group${seat.group_id}`);
+                    return queue_seat.attr('cx');
+                })
+                .attr('cy', seat => {
+                    let queue_seat = d3.select(`.group${seat.group_id}`);
+                    return queue_seat.attr('cy');
+                })
                 .transition()
-                .duration(1500)
+                .delay(seat => seat.transition_id * 100)
                 .attr('cx', seat => seat.seat_x)
                 .attr('cy', seat => seat.seat_y);
 
