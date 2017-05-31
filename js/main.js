@@ -79,7 +79,6 @@ $(function () {
             }
         }
 
-
         if (result.done.length > 0) {
             removeSeatedGroups(result.done, function () {
                 drawQueue(result);
@@ -89,6 +88,7 @@ $(function () {
             drawQueue(result);
         }
 
+        drawTableLayout(true);
     });
 
     let svg = d3.select('#main-svg');
@@ -96,7 +96,7 @@ $(function () {
     //  Draw the static elements --------------------------------------
 
     // draw the tables
-    function drawTableLayout() {
+    function drawTableLayout(updateWait) {
         let tables = svg.selectAll('.restaurant-table').data(TABLES);
         tables.enter().append('rect')
             .attr('class', 'restaurant-table')
@@ -114,10 +114,54 @@ $(function () {
             .attr('fill', DEFAULT_SEAT_FILL)
             .attr('cx', seat => seat.seat_x)
             .attr('cy', seat => seat.seat_y);
+
+        if (updateWait)
+        {
+            let table_texts = svg.selectAll('.table-wait').data(TABLES);
+            table_texts.exit().remove()
+
+            // add the wait times for each group's table(s)
+            table_texts.enter().append('text')
+                .attr('class', 'table-wait')
+                .attr('x', table => table.table_x)
+                .attr('y', table => table.table_y)
+                .attr('width', table => table.table_width)
+                .attr('height', table => table.table_height)
+                .attr('dy', table => table.table_height / 2)
+                .attr('dx', table => table.table_width / 2)
+                .style('text-anchor', 'middle')
+                .style("fill", "white")
+                .text(function(table)
+                {
+                    if (table.wait && table.wait > 0)
+                    {
+                        return table.wait;
+                    }
+                });
+
+            table_texts.text(function(table)
+            {
+                if (table.wait && table.wait > 0)
+                {
+                    return table.wait;
+                }
+            });
+
+            updateTableWaits();
+        }
     }
     drawTableLayout();
 
-
+    function updateTableWaits()
+    {
+        for (let i = 0; i < TABLES.length; i++)
+        {
+            if (TABLES[i].wait && TABLES[i].wait > 0)
+            {
+                TABLES[i].wait--;
+            }
+        }
+    }
 
     // Finish drawing the static elements ------------------------------------------------------
 
@@ -297,8 +341,8 @@ $(function () {
             groups.forEach(group => {
                 // Transform seatomatic's output of int[] to table[] from layout.js with pixel coordinates
                 let tables = group.tables.map(table_index => TABLES[table_index]);
-
                 tables.forEach(table => {
+                    TABLES[table.table_id].wait = group.wait;
                     let seats = table.seats.map(seat => {
                         seat.color = group.group.color;
                         seat.group_id = group.group.id;
