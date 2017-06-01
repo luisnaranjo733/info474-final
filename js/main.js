@@ -1,6 +1,6 @@
 let DEFAULT_SEAT_FILL = 'black';
 let DEFAULT_CIRCLE_RADIUS = 20
-
+let bad_alg = false;
 let party_id_count = 0;
 $(function () {
 
@@ -57,13 +57,19 @@ $(function () {
         drawQueue();
     });
 
+    $('#algorithm-enabled').change(function()
+    {
+        bad_alg = !$(this).is(':checked');
+    });
+
+
     // handle stepping through the algorithm
     $('#step-btn').click(() => {
         $('#step-btn').prop('disabled', true);
         // pop a party off the queue and seat them according to the algorithm
         let algorithm_is_enabled = $('#algorithm-enabled').is(':checked');
 
-        let result = seater.step();
+        let result = seater.step(bad_alg);
         // returns object with two fields seated and done,
         // both are arrays and both will contain. wait time, id group, and table id
         console.log('step');
