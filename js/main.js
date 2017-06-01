@@ -59,6 +59,7 @@ $(function () {
 
     // handle stepping through the algorithm
     $('#step-btn').click(() => {
+        $('#step-btn').prop('disabled', true);
         // pop a party off the queue and seat them according to the algorithm
         let algorithm_is_enabled = $('#algorithm-enabled').is(':checked');
 
@@ -86,6 +87,10 @@ $(function () {
         }
         else if (result.seated.length > 0) {
             drawQueue(result);
+        }
+        else
+        {
+            $('#step-btn').prop('disabled', false);
         }
 
         drawTableLayout(true);
@@ -288,7 +293,7 @@ $(function () {
 
             let x = $('#left-pane').width() + $('#right-pane').width() + 50;
             let y = 200;
-            d3.select(group_type_selector + group.id)
+            d3.selectAll(group_type_selector + group.id)
                 .remove();
         }
         callback();
@@ -304,7 +309,7 @@ $(function () {
 
             let x = $('#left-pane').width() + $('#right-pane').width() + 50;
             let y = 200;
-            d3.select(group_type_selector + group.id)
+            d3.selectAll(group_type_selector + group.id)
                 .transition()
                 .duration(1000)
                 .attr('cx', group => {
@@ -366,6 +371,7 @@ $(function () {
             })
 
             let seated = svg.selectAll('.seated_party').data(seated_guests, seat => seat.seat_id);
+            let disableTime = 0;
             seated.enter()
                 .append('circle')
                 .attr('class', seat => `seated_party group${seat.group_id}`)
@@ -381,7 +387,16 @@ $(function () {
                     return queue_seat.attr('cy');
                 })
                 .transition()
-                .delay(seat => seat.transition_id * 100)
+                // .delay(seat => seat.transition_id * 100)
+                .delay(function (seat)
+                {
+                    let delayTime = seat.transition_id * 100;
+                    if (delayTime > disableTime)
+                    {
+                        disableTime = delayTime;
+                    }
+                    return delayTime;
+                })
                 .attr('cx', seat => seat.seat_x)
                 .attr('cy', seat => seat.seat_y);
 
@@ -392,7 +407,10 @@ $(function () {
                 drawQueue();
             });
 
-
+            console.log('disable time', disableTime);
+            setTimeout(function() {
+                $('#step-btn').prop('disabled', false);
+            }, disableTime);
         }
     }
 
