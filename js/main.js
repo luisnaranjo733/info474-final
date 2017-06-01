@@ -1,6 +1,6 @@
 let DEFAULT_SEAT_FILL = 'black';
 let DEFAULT_CIRCLE_RADIUS = 20
-
+let disableTime = 0;
 let party_id_count = 0;
 $(function () {
 
@@ -70,15 +70,7 @@ $(function () {
         console.log(result);
 
         // remove parties from the queue that are going to get seated
-        for (let i = 0; i < result.seated.length; i++) {
-            let groupId = result.seated[i].group.id;
-            for (let j = 0; j < queue.length; j++) {
-                let group = queue[j];
-                if (group.id == groupId) {
-                    queue.splice(j, 1);
-                }
-            }
-        }
+        queue = result.queue;
 
         if (result.done.length > 0) {
             removeSeatedGroups(result.done, function () {
@@ -198,7 +190,7 @@ $(function () {
     };
 
     function clearQueue(queue) {
-        svg.selectAll('.party').remove();
+        svg.selectAll('.unseated_party').remove();
         svg.selectAll('.text').remove();
     }
 
@@ -228,22 +220,20 @@ $(function () {
             return party;
         })
 
-        let parties = svg.selectAll('.party').data(queue, party => party.id);
+        let parties = svg.selectAll('.unseated_party').data(queue, party => party.id);
         let text = svg.selectAll('.text').data(queue, party => party.id);
 
         if (groups) {
             seatGroups(groups.seated, parties.exit());
         }
+        let textDelay = 0;
 
-        // update parties in queue
-        parties
-            .transition()
-            .duration(500)
-            .attr('cx', (party, i) => QUEUE_SLOTS[i].x)
-            .attr('cy', (party, i) => QUEUE_SLOTS[i].y)
+
 
         // enter new parties to queue
         parties.enter()
+            // .append('g')
+            // .attr('class', party => `unseated_party group${party.id}`)
             .append('circle')
             .attr('class', party => `unseated_party group${party.id}`)
             .attr('r', DEFAULT_CIRCLE_RADIUS)
@@ -251,9 +241,20 @@ $(function () {
             .attr('cx', queue_x)
             .attr('cy', $('#left-pane').height() + 100)
             .transition()
-            .delay(circle => circle.temp_id * 150)
+            .delay(function(circle) {
+                let delay = circle.temp_id * 150;
+                textDelay = (delay > textDelay) ? delay : textDelay;
+                return delay;
+            })
             .attr('cx', (party, i) => QUEUE_SLOTS[i].x)
             .attr('cy', (party, i) => QUEUE_SLOTS[i].y);
+
+        // update parties in queue
+        parties
+            .transition()
+            .duration(500)
+            .attr('cx', (party, i) => QUEUE_SLOTS[i].x)
+            .attr('cy', (party, i) => QUEUE_SLOTS[i].y)
 
         // delete exiting text
         text.exit().remove();
@@ -276,6 +277,7 @@ $(function () {
             .style("text-anchor", "middle")
             .style("fill", "white")
             .text(function (q) { return +q.size });
+
 
         // delete the temporary id as it is no longer needed after this point
         queue.forEach(party => {
@@ -338,7 +340,7 @@ $(function () {
         // this should be deleting parties in the queue that have been spliced from the queue
         // but it doesn't work for some reason.
         // Parties are being copied to the restaurant, but their original queue counterparts are not being deleted as expected.
-        groupCircle.remove();
+
 
 
         if (groups.length > 0) {
@@ -371,7 +373,7 @@ $(function () {
             })
 
             let seated = svg.selectAll('.seated_party').data(seated_guests, seat => seat.seat_id);
-            let disableTime = 0;
+
             seated.enter()
                 .append('circle')
                 .attr('class', seat => `seated_party group${seat.group_id}`)
@@ -399,6 +401,11 @@ $(function () {
                 })
                 .attr('cx', seat => seat.seat_x)
                 .attr('cy', seat => seat.seat_y);
+
+            setTimeout(function()
+            {
+                groupCircle.remove();
+            }, disableTime);
 
             removeUnseatedGroups(groups, function() {
                 console.log('CALLBACK');
