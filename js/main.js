@@ -328,8 +328,39 @@ $(function () {
     }
 
     function updateModal(algorithm_result){
-        console.log('updating modal');
         console.log(algorithm_result);
+
+        // UPDATE THE "after the last step" section of the modal
+        let after_last_step = '';
+        if (algorithm_result.seated.length == 0) {
+            after_last_step = "<p>No parties could be seated on this step</p>";
+        } else {
+            after_last_step = '<ul>';
+            algorithm_result.seated.forEach(seated => {
+                let result = `Seated a party of ${seated.group.size} at table`;
+                if (seated.tables.length > 1) {
+                    result += `s `;
+                    for(i = 0; i < seated.tables.length; i++) {
+                        let table_id = seated.tables[i];
+                        if (i == seated.tables.length - 1) {
+                            result += `and ${table_id}.`;
+                        } else if (seated.tables.length == 2) {
+                            result += `${table_id} `;
+                        } else {
+                            result += `${table_id}, `;
+                        }
+                    }
+                } else if (seated.tables.length == 1) {
+                    result += ` ${seated.tables[0]}`;
+                }
+                console.log(result);
+                after_last_step += `<li>${result}</li>`;
+            });
+            after_last_step += '</ul>';
+        }
+        $('#analysis-after').html(after_last_step);
+        // FINISH UPDATING THE "after the last step" section of the modal
+        
     }
 
     function stepDraw()
