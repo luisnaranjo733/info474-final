@@ -79,10 +79,50 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Modal title</h4>
+                    <h4 class="modal-title">Restaurant Algorithm Visualization</h4>
                 </div>
                 <div class="modal-body">
-                    <p>One fine body&hellip;</p>
+                    <b>The problem</b>
+                    <p>Preliminary research shows that restaurants do not have reliable seating methods that are backed by analysis of any sort.
+                    </p>
+
+                    <b>The solution</b>
+                    <p>
+                        Trevor, one of our teammates, has developed a seating algorithm for restaurants.
+                        He originally developed his algorithm as a python function that takes nodes and edges as a parameter (a <a href="https://en.wikipedia.org/wiki/Graph_(abstract_data_type)">graph</a>).
+                    </p>
+                    <p>
+                        The algorithm takes this graph (which represents a current restaurant layout) and uses it to compute an optimal
+                        seating arrangement.
+                    </p>
+                    <p>
+                        The output of this algorithm was originally just another graph. We wanted to take this algorithm and provide a way to visualize it.
+                        This data visualization is our attempt to communicate how this algorithm is working.
+                    </p>
+
+                    <b>Controls</b>
+                    <p>
+                        In order to amplify the user's cognition, we've provided several controls for interacting with the algorithm.
+                        <ul>
+                            <li>You can toggle the algorithm on and off, to showcase how the algorithm compares against a "naive" base line algorithm.</li>
+                            <li>You can choose between two different party size distributions for the wait queue (random or uniform). This allows the user to inspect the algorithm's behavior with various differing sets of input.</li>
+                            <li>A step button that the user can press to simulate 15 minutes of time in our theoretical restaurant. This allows the user to view seating changes in increments, so that they can stop and analyze what the algorithm has done.</li>
+                            <li>A play/pause button that the user can use to start and stop the accelerated flow of time and watch the algorithm work at a fast pace.</li>
+                        </ul>
+                        
+                    </p>
+
+
+                    <b>How does the algorithm work?</b>
+                    <p>
+                        The algorithm considers several variables to find a suitable seating layout:
+                    </p>
+                    <ul>
+                        <li>Number of available tables</li>
+                        <li>Size of available tables</li>
+                        <li>The "combinability" of a table with any other given available table</li>
+                        <li>Estimated wait time of each occupied table, estimated according to party size</li>
+                    </ul>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
