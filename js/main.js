@@ -2,7 +2,9 @@ let DEFAULT_SEAT_FILL = 'black';
 let DEFAULT_CIRCLE_RADIUS = 20
 let disableTime = 0;
 let party_id_count = 0;
-let curr_color = 0
+let curr_color = 0;
+let playInterval;
+let play = false;
 $(function () {
 
     let party_pattern = 'Random';
@@ -308,6 +310,47 @@ $(function () {
 
     }
 
+    function stepDraw()
+    {
+        $('#step-btn').prop('disabled', true);
+        if (!play)
+        {
+            $('#play-btn').prop('disabled', true);
+        }
+        // pop a party off the queue and seat them according to the algorithm
+        let algorithm_is_enabled = $('#algorithm-enabled').is(':checked');
+
+        let result = seater.step(!algorithm_is_enabled);
+        // returns object with two fields seated and done,
+        // both are arrays and both will contain. wait time, id group, and table id
+
+        // remove parties from the queue that are going to get seated
+        queue = result.queue;
+
+        if (result.done.length > 0) removeSeatedGroups(result.done);
+
+        if (result.seated.length > 0) {
+            seatGroups(queue, result.seated)
+            setTimeout(function() {
+                if (!play)
+                {
+                    $('#step-btn').prop('disabled', false);
+                }
+                $('#play-btn').prop('disabled', false);
+                addQueue(5 - queue.length)
+                drawQueue(queue)
+                updateTableWaits()
+            }, 2000)
+        } else {
+            if (!play)
+            {
+                $('#step-btn').prop('disabled', false);
+            }
+            $('#play-btn').prop('disabled', false);
+            updateTableWaits()
+        }
+    }
+
     // open bootstrap modal to display about section on click
     $('#about').click(() => $('#myModal').modal());
 
@@ -326,31 +369,30 @@ $(function () {
     });
 
     // handle stepping through the algorithm
-    $('#step-btn').click(() => {
-        $('#step-btn').prop('disabled', true);
-        // pop a party off the queue and seat them according to the algorithm
-        let algorithm_is_enabled = $('#algorithm-enabled').is(':checked');
+    $('#step-btn').click(stepDraw);
 
-        let result = seater.step(!algorithm_is_enabled);
-        // returns object with two fields seated and done,
-        // both are arrays and both will contain. wait time, id group, and table id
-
-        // remove parties from the queue that are going to get seated
-        queue = result.queue;
-
-        if (result.done.length > 0) removeSeatedGroups(result.done);
-
-        if (result.seated.length > 0) {
-            seatGroups(queue, result.seated)
-            setTimeout(function() {
-                $('#step-btn').prop('disabled', false);
-                addQueue(5 - queue.length)
-                drawQueue(queue)
-                updateTableWaits()
-            }, 2000)
-        } else {
-            $('#step-btn').prop('disabled', false);
-            updateTableWaits()
+    // handle playing the visualization
+    $('#play-btn').click(function()
+    {
+        if ($(this).hasClass('btn-success'))
+        {
+            play = true;
+            $('#step-btn').prop('disabled', true);
+            $(this).removeClass('btn-success');
+            $(this).addClass('btn-danger');
+            $(this).html('Stop');
+            stepDraw();
+            playInterval = setInterval(stepDraw, 2000);
         }
+        else
+        {
+            play = false;
+            $('#step-btn').prop('disabled', false);
+            $(this).removeClass('btn-danger');
+            $(this).addClass('btn-success');
+            $(this).html('Play');
+            clearInterval(playInterval);
+        }
+
     });
 });
