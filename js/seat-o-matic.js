@@ -32,6 +32,10 @@ let SeatOMatic = function(nodes, edges) {
     waiting_groups.push(v)
   }
 
+  s.clearQueue = function() {
+    waiting_groups = [];
+  }
+
   s.seated = function() {
     return seated_groups
   }

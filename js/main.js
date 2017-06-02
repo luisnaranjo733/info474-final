@@ -31,7 +31,7 @@ $(function () {
     };
 
     // temporarily override random number gen code for easier debugging
-    randParties = (pattern) => [5, 4, 3, 2, 1];
+    // randParties = (pattekrn) => [5, 4, 3, 2, 1];
 
     let queue = randParties(party_pattern).map((generated_size, i) => {
         let groupObject = {
