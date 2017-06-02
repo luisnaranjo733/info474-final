@@ -79,6 +79,7 @@ $(function () {
     // draw the tables
     function drawTableLayout() {
         let tables = svg.selectAll('.restaurant-table').data(TABLES);
+        
         tables.enter().append('rect')
             .attr('class', 'restaurant-table')
             .attr('x', table => table.table_x)
@@ -110,6 +111,22 @@ $(function () {
             .style('text-anchor', 'middle')
             .style("fill", "white")
             .text(table => 'Wait: ' + table.wait);
+
+        let table_labels = svg.selectAll('.table-label').data(TABLES);
+
+        // add a unique identifier label for each table
+        table_labels.enter().append('text')
+            .attr('class', 'table-label')
+            .attr('x', table => table.table_x)
+            .attr('y', table => table.table_y)
+            .attr('width', table => table.table_width)
+            .attr('height', table => table.table_height)
+            .attr('dy', table => -(table.table_height / 2))
+            .attr('dx', table => table.table_width / 2)
+            .style('text-anchor', 'middle')
+            .style("fill", "black")
+            .style('font-size', '1.25em')
+            .text(table => `Table ${table.table_id}`);
     }
 
     function updateTableWaits() {
