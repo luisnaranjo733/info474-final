@@ -79,6 +79,7 @@ $(function () {
     // draw the tables
     function drawTableLayout() {
         let tables = svg.selectAll('.restaurant-table').data(TABLES);
+        
         tables.enter().append('rect')
             .attr('class', 'restaurant-table')
             .attr('x', table => table.table_x)
@@ -110,6 +111,22 @@ $(function () {
             .style('text-anchor', 'middle')
             .style("fill", "white")
             .text(table => 'Wait: ' + table.wait);
+
+        let table_labels = svg.selectAll('.table-label').data(TABLES);
+
+        // add a unique identifier label for each table
+        table_labels.enter().append('text')
+            .attr('class', 'table-label')
+            .attr('x', table => table.table_x)
+            .attr('y', table => table.table_y)
+            .attr('width', table => table.table_width)
+            .attr('height', table => table.table_height)
+            .attr('dy', table => -(table.table_height / 2))
+            .attr('dx', table => table.table_width / 2)
+            .style('text-anchor', 'middle')
+            .style("fill", "black")
+            .style('font-size', '1.25em')
+            .text(table => `Table ${table.table_id}`);
     }
 
     function updateTableWaits() {
@@ -310,8 +327,66 @@ $(function () {
 
     }
 
+    function parseTables(party) {
+        let result = '';
+        if (party.tables.length > 1) {
+            result += 's ';
+            for(i = 0; i < party.tables.length; i++) {
+                let table_id = party.tables[i];
+                if (i == party.tables.length - 1) {
+                    result += `and ${table_id}.`;
+                } else if (party.tables.length == 2) {
+                    result += `${table_id} `;
+                } else {
+                    result += `${table_id}, `;
+                }
+            }
+        } else if (party.tables.length == 1) {
+            result += ` ${party.tables[0]}`;
+        }
+        return result;
+    };
+
+    function updateModal(algorithm_result){
+        let after_last_step = '<ul><li>Exiting parties';
+
+        after_last_step += '<ul>'
+
+        if (algorithm_result.done.length == 0) {
+            after_last_step += "<li>No parties left the restaurant on this step</li>";
+        } else {
+            algorithm_result.done.forEach(party => {
+                let result = `A party of size ${party.group.size} left table` + parseTables(party);
+                after_last_step += `<li>${result}</li>`;
+            })
+        }
+
+        after_last_step += '</ul></li><li>Entering parties<ul>';
+
+        if (algorithm_result.seated.length == 0) {
+            after_last_step += "<li>No parties could be seated on this step</li>";
+        } else {
+            algorithm_result.seated.forEach(seated => {
+                let result = `Seated a party of ${seated.group.size} at table` + parseTables(seated);
+                after_last_step += `<li>${result}</li>`;
+            });
+        }
+
+        after_last_step += '</ul></li></ul>';
+        $('#analysis-after').html(after_last_step);
+    }
+
     function stepDraw()
     {
+        // enable the analysis button after the first step (manual or automatic)
+        $('#analysis-btn').removeAttr('disabled');
+
+        // make the analysis button flash on each step
+        $('#analysis-btn').addClass('active');
+        setTimeout(() => {
+            $('#analysis-btn').removeClass('active')
+        }, 500)
+
         $('#step-btn').prop('disabled', true);
         if (!play)
         {
@@ -323,6 +398,8 @@ $(function () {
         let result = seater.step(!algorithm_is_enabled);
         // returns object with two fields seated and done,
         // both are arrays and both will contain. wait time, id group, and table id
+
+        updateModal(result);
 
         // remove parties from the queue that are going to get seated
         queue = result.queue;
@@ -352,7 +429,8 @@ $(function () {
     }
 
     // open bootstrap modal to display about section on click
-    $('#about').click(() => $('#myModal').modal());
+    $('#about').click(() => $('#aboutModal').modal());
+    $('#analysis-btn').click(() => $('#analysisModal').modal());
 
     // update party_pattern global var on select change
     $('select').change(() => {
