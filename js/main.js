@@ -327,40 +327,53 @@ $(function () {
 
     }
 
-    function updateModal(algorithm_result){
-        console.log(algorithm_result);
-
-        // UPDATE THE "after the last step" section of the modal
-        let after_last_step = '';
-        if (algorithm_result.seated.length == 0) {
-            after_last_step = "<p>No parties could be seated on this step</p>";
-        } else {
-            after_last_step = '<ul>';
-            algorithm_result.seated.forEach(seated => {
-                let result = `Seated a party of ${seated.group.size} at table`;
-                if (seated.tables.length > 1) {
-                    result += `s `;
-                    for(i = 0; i < seated.tables.length; i++) {
-                        let table_id = seated.tables[i];
-                        if (i == seated.tables.length - 1) {
-                            result += `and ${table_id}.`;
-                        } else if (seated.tables.length == 2) {
-                            result += `${table_id} `;
-                        } else {
-                            result += `${table_id}, `;
-                        }
-                    }
-                } else if (seated.tables.length == 1) {
-                    result += ` ${seated.tables[0]}`;
+    function parseTables(party) {
+        let result = '';
+        if (party.tables.length > 1) {
+            result += 's ';
+            for(i = 0; i < party.tables.length; i++) {
+                let table_id = party.tables[i];
+                if (i == party.tables.length - 1) {
+                    result += `and ${table_id}.`;
+                } else if (party.tables.length == 2) {
+                    result += `${table_id} `;
+                } else {
+                    result += `${table_id}, `;
                 }
-                console.log(result);
+            }
+        } else if (party.tables.length == 1) {
+            result += ` ${party.tables[0]}`;
+        }
+        return result;
+    };
+
+    function updateModal(algorithm_result){
+        let after_last_step = '<ul><li>Exiting parties';
+
+        after_last_step += '<ul>'
+
+        if (algorithm_result.done.length == 0) {
+            after_last_step += "<li>No parties left the restaurant on this step</li>";
+        } else {
+            algorithm_result.done.forEach(party => {
+                let result = `A party of size ${party.group.size} left table` + parseTables(party);
+                after_last_step += `<li>${result}</li>`;
+            })
+        }
+
+        after_last_step += '</ul></li><li>Entering parties<ul>';
+
+        if (algorithm_result.seated.length == 0) {
+            after_last_step += "<li>No parties could be seated on this step</li>";
+        } else {
+            algorithm_result.seated.forEach(seated => {
+                let result = `Seated a party of ${seated.group.size} at table` + parseTables(seated);
                 after_last_step += `<li>${result}</li>`;
             });
-            after_last_step += '</ul>';
         }
+
+        after_last_step += '</ul></li></ul>';
         $('#analysis-after').html(after_last_step);
-        // FINISH UPDATING THE "after the last step" section of the modal
-        
     }
 
     function stepDraw()

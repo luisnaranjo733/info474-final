@@ -56,13 +56,14 @@
                     <button type="button" id="step-btn" class="btn btn-default">Step</button>
                     <button type="button" id="play-btn" class="btn btn-success">Play</button>
                 </div>
-                
+
             </div>
             <div class="col-md-4">
                 <button id="analysis-btn" class="btn btn-info" disabled>What just happened?</button>
             </div>
             <div class="col-md-4">
-                <input id="algorithm-enabled" type="checkbox" checked data-toggle="toggle" data-width="15rem" data-on="Algorithm enabled" data-off="Algorithm disabled">
+                <input id="algorithm-enabled" type="checkbox" checked data-toggle="toggle" data-width="15rem" data-on="Algorithm enabled"
+                    data-off="Algorithm disabled">
             </div>
             <div class="col-md-2">
                 <select class="form-control">
@@ -87,33 +88,38 @@
                 </div>
                 <div class="modal-body">
                     <b>The problem</b>
-                    <p>Preliminary research shows that restaurants do not have reliable seating methods that are backed by analysis of any sort.
+                    <p>Preliminary research shows that restaurants do not have reliable seating methods that are backed by analysis
+                        of any sort.
                     </p>
 
                     <b>The solution</b>
                     <p>
-                        Trevor, one of our teammates, has developed a seating algorithm for restaurants.
-                        He originally developed his algorithm as a python function that takes nodes and edges as a parameter (a <a href="https://en.wikipedia.org/wiki/Graph_(abstract_data_type)">graph</a>).
+                        Trevor, one of our teammates, has developed a seating algorithm for restaurants. He originally developed his algorithm as
+                        a python function that takes nodes and edges as a parameter (a <a href="https://en.wikipedia.org/wiki/Graph_(abstract_data_type)">graph</a>).
                     </p>
                     <p>
-                        The algorithm takes this graph (which represents a current restaurant layout) and uses it to compute an optimal
-                        seating arrangement.
+                        The algorithm takes this graph (which represents a current restaurant layout) and uses it to compute an optimal seating arrangement.
                     </p>
                     <p>
-                        The output of this algorithm was originally just another graph. We wanted to take this algorithm and provide a way to visualize it.
-                        This data visualization is our attempt to communicate how this algorithm is working.
+                        The output of this algorithm was originally just another graph. We wanted to take this algorithm and provide a way to visualize
+                        it. This data visualization is our attempt to communicate how this algorithm is working.
                     </p>
 
                     <b>Controls</b>
                     <p>
                         In order to amplify the user's cognition, we've provided several controls for interacting with the algorithm.
                         <ul>
-                            <li>You can toggle the algorithm on and off, to showcase how the algorithm compares against a "naive" base line algorithm.</li>
-                            <li>You can choose between two different party size distributions for the wait queue (random or uniform). This allows the user to inspect the algorithm's behavior with various differing sets of input.</li>
-                            <li>A step button that the user can press to simulate 15 minutes of time in our theoretical restaurant. This allows the user to view seating changes in increments, so that they can stop and analyze what the algorithm has done.</li>
-                            <li>A play/pause button that the user can use to start and stop the accelerated flow of time and watch the algorithm work at a fast pace.</li>
+                            <li>You can toggle the algorithm on and off, to showcase how the algorithm compares against a "naive"
+                                base line algorithm.</li>
+                            <li>You can choose between two different party size distributions for the wait queue (random or uniform).
+                                This allows the user to inspect the algorithm's behavior with various differing sets of input.</li>
+                            <li>A step button that the user can press to simulate 15 minutes of time in our theoretical restaurant.
+                                This allows the user to view seating changes in increments, so that they can stop and analyze
+                                what the algorithm has done.</li>
+                            <li>A play/pause button that the user can use to start and stop the accelerated flow of time and
+                                watch the algorithm work at a fast pace.</li>
                         </ul>
-                        
+
                     </p>
 
 
@@ -146,12 +152,10 @@
                     <h4 class="modal-title">What just happened?</h4>
                 </div>
                 <div class="modal-body">
-                    <b>Before the last step happened</b>
-                    <p id="analysis-before"></p>
-                    <b>After the last step happened</b>
+                    <b>The following happened on the previous step:</b>
                     <p id="analysis-after"></p>
 
-                    <b>Note: It may be useful to use the manual step feature instead of the auto step feature when reading this analysis modal.</b>
+                    <b>Note: It may be useful to use the manual step feature instead of the auto step feature when reading this analysis modal so you have time to read the analysis.</b>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -164,7 +168,7 @@
     <!-- /.modal -->
 
     <div id="vis">
-        
+
         <div id="left-pane">
         </div>
 
