@@ -310,10 +310,21 @@ $(function () {
 
     }
 
+    function updateModal(algorithm_result){
+        console.log('updating modal');
+        console.log(algorithm_result);
+    }
+
     function stepDraw()
     {
         // enable the analysis button after the first step (manual or automatic)
         $('#analysis-btn').removeAttr('disabled');
+
+        // make the analysis button flash on each step
+        $('#analysis-btn').addClass('active');
+        setTimeout(() => {
+            $('#analysis-btn').removeClass('active')
+        }, 500)
 
         $('#step-btn').prop('disabled', true);
         if (!play)
@@ -326,6 +337,8 @@ $(function () {
         let result = seater.step(!algorithm_is_enabled);
         // returns object with two fields seated and done,
         // both are arrays and both will contain. wait time, id group, and table id
+
+        updateModal(result);
 
         // remove parties from the queue that are going to get seated
         queue = result.queue;
