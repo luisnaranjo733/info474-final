@@ -122,7 +122,7 @@ $(function () {
         table_texts.text(table => 'Wait: ' + table.wait)
     }
 
-    function clearQueue(queue) {
+    function clearQueue() {
         svg.selectAll('.unseated_party').remove();
         svg.selectAll('.unseated_text').remove();
     }
@@ -358,13 +358,16 @@ $(function () {
     $('select').change(() => {
         party_pattern = $('select').val();
         queue = randParties(party_pattern).map((generated_size, i) => {
-            party_id_count += 1;
-            return {
+            let groupObject = {
                 size: generated_size,
-                id: party_id_count
-            }
+                id: party_id_count,
+                color: colorScale(party_id_count)
+            };
+            party_id_count += 1;
+            seater.addQueue(groupObject);
+            return groupObject;
         });
-        clearQueue(queue);
+        clearQueue();
         drawQueue(queue);
     });
 
