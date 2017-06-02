@@ -51,17 +51,18 @@
     <div id="control-bar" class="container-fluid">
 
         <div class="row">
-            <div class="col-md-3">
-                <button id="step-btn" class="btn btn-default">Step</button>
+            <div class="col-md-4">
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" id="step-btn" class="btn btn-default">Step</button>
+                    <button type="button" id="play-btn" class="btn btn-success">Play</button>
+                </div>
+                
             </div>
-            <div class="col-md-3">
-                <button id="play-btn" class="btn btn-success">Play</button>
+            <div class="col-md-2">
+                <button id="what-btn" class="btn btn-info">What just happened?</button>
             </div>
             <div class="col-md-3">
                 <input id="algorithm-enabled" type="checkbox" checked data-toggle="toggle" data-width="15rem" data-on="Algorithm enabled" data-off="Algorithm disabled">
-            </div>
-            <div class="col-md-3">
-                <p>Wait time: <span>15 minutes</span></p>
             </div>
             <div class="col-md-3">
                 <select class="form-control">
