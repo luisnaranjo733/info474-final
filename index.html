@@ -51,20 +51,20 @@
     <div id="control-bar" class="container-fluid">
 
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-2">
                 <div class="btn-group" role="group" aria-label="...">
                     <button type="button" id="step-btn" class="btn btn-default">Step</button>
                     <button type="button" id="play-btn" class="btn btn-success">Play</button>
                 </div>
                 
             </div>
-            <div class="col-md-2">
-                <button id="what-btn" class="btn btn-info">What just happened?</button>
+            <div class="col-md-4">
+                <button id="analysis-btn" class="btn btn-info" disabled>What just happened?</button>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <input id="algorithm-enabled" type="checkbox" checked data-toggle="toggle" data-width="15rem" data-on="Algorithm enabled" data-off="Algorithm disabled">
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <select class="form-control">
                     <option>Random</option>
                     <option>Uniform</option>
@@ -78,7 +78,7 @@
 
 <body>
 
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+    <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -127,6 +127,28 @@
                         <li>The "combinability" of a table with any other given available table</li>
                         <li>Estimated wait time of each occupied table, estimated according to party size</li>
                     </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+    <div class="modal fade" id="analysisModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">What just happened?</h4>
+                </div>
+                <div class="modal-body">
+                    <b>The problem</b>
+                    <p>Preliminary research shows that restaurants do not have reliable seating methods that are backed by analysis of any sort.
+                    </p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

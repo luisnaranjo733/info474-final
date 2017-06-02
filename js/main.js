@@ -312,6 +312,9 @@ $(function () {
 
     function stepDraw()
     {
+        // enable the analysis button after the first step (manual or automatic)
+        $('#analysis-btn').removeAttr('disabled');
+
         $('#step-btn').prop('disabled', true);
         if (!play)
         {
@@ -352,7 +355,8 @@ $(function () {
     }
 
     // open bootstrap modal to display about section on click
-    $('#about').click(() => $('#myModal').modal());
+    $('#about').click(() => $('#aboutModal').modal());
+    $('#analysis-btn').click(() => $('#analysisModal').modal());
 
     // update party_pattern global var on select change
     $('select').change(() => {
