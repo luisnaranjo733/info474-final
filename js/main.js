@@ -139,9 +139,13 @@ $(function () {
         table_texts.text(table => 'Wait: ' + table.wait)
     }
 
-    function clearQueue() {
-        svg.selectAll('.unseated_party').remove();
-        svg.selectAll('.unseated_text').remove();
+    function clearQueue(callback) {
+        seater.clearQueue(function()
+        {
+            svg.selectAll('.unseated_party').remove();
+            svg.selectAll('.unseated_text').remove();
+            callback();
+        });
     }
 
     // int count : the number of parties/groups you want to add to the queue
@@ -435,18 +439,21 @@ $(function () {
     // update party_pattern global var on select change
     $('select').change(() => {
         party_pattern = $('select').val();
-        queue = randParties(party_pattern).map((generated_size, i) => {
-            let groupObject = {
-                size: generated_size,
-                id: party_id_count,
-                color: colorScale(party_id_count)
-            };
-            party_id_count += 1;
-            seater.addQueue(groupObject);
-            return groupObject;
+        clearQueue(function()
+        {
+            queue = randParties(party_pattern).map((generated_size, i) => {
+                let groupObject = {
+                    size: generated_size,
+                    id: party_id_count,
+                    color: colorScale(party_id_count)
+                };
+                party_id_count += 1;
+                seater.addQueue(groupObject);
+                return groupObject;
+            });
+
+            drawQueue(queue);
         });
-        clearQueue();
-        drawQueue(queue);
     });
 
     // handle stepping through the algorithm
