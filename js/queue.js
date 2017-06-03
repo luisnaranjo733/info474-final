@@ -1,6 +1,7 @@
 var max = 5;
 var parties = [];
 
+// generate a set of random party sizes
 var randParties = function(type){
     var typeHolder;
     if (typeHolder != type) {
@@ -19,6 +20,7 @@ var randParties = function(type){
     }
 };
 
+// generate a single random party size
 let randParty = function(type)
 {
     if (type == 'Uniform') {
